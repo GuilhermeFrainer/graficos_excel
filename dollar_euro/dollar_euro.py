@@ -57,7 +57,6 @@ def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workboo
     # Saves global variable for later
     global series_length
     series_length = len(json_data['observations'])
-
     
     today = date.today().isoformat()
     filename = f"{config.FILE_PATH}Câmbio dólar-euro {today}.xlsx"
@@ -67,6 +66,7 @@ def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workboo
 
     # Adds formats
     date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
+    num_format = workbook.add_format({'num_format': '0.##'})
 
     # Writes headers
     worksheet.write(0, 0, "Data")
@@ -78,7 +78,7 @@ def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workboo
         worksheet.write_datetime(i + 1, 0, date_obj, date_format)
 
         try:
-            worksheet.write(i + 1, 1, float(item['value']))
+            worksheet.write(i + 1, 1, float(item['value']), num_format)
         except:
             worksheet.write_formula(i + 1, 1, '=NA()')
 

@@ -21,6 +21,9 @@ x_config = {
 y_config = {
     'num_font': {'size': 12, 'name': 'Calibri'},
     'major_gridlines': {'visible': False},
+    'min': 0.6,
+    'max': 1.8,
+    'major_unit': 0.1,
 }
 
 legend_config = {
