@@ -6,6 +6,7 @@ import json
 from datetime import date
 import sidra_helpers
 from pprint import pprint
+import xlsxwriter
 
 
 def main():
@@ -14,10 +15,9 @@ def main():
     
     json_data = read_json()
     
-    data_list = json_to_list(json_data)
-    filename = f"{config.FILE_PATH}Câmbio dólar-euro"
-    headers = ["Data", "Originais", "Corrigidos"]
-    workbook, worksheet = sidra_helpers.make_excel(filename, data_list, headers)
+    #series_list = json_to_list(json_data)
+    workbook, worksheet = make_excel(json_data)
+
 
     workbook.close()
 
@@ -48,20 +48,50 @@ def get_json() -> dict:
 
 
 # Converts json object to list suitable for using with sidra_helpers
-def json_to_list(json_data: dict) -> list[list]:
-    value_list = []
-    date_list = []
+def json_to_list(json_data: dict) -> list[dict]:
+    series_list = []
     
     observations = json_data['observations']
     for item in observations:
-        date_list.append(date.fromisoformat(item['date']))
-        
         try:
-            value_list.append(float(item['value']))
-        except ValueError:
-            value_list.append(0)
+            dict_to_add = {
+                'date': date.fromisoformat(item['date']),
+                'value': float(item['value'])
+            }
+        except:
+            dict_to_add = {
+                'date': date.fromisoformat(item['date']),
+                'value': 0
+            }      
     
-    return [date_list, value_list]
+    return series_list
+
+
+def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
+    today = date.today().isoformat()
+    filename = f"{config.FILE_PATH}Cãmbio dólar-euro {today}.xlsx"
+    
+    workbook = xlsxwriter.Workbook(filename)
+    worksheet = workbook.add_worksheet("Dados")
+
+    # Adds formats
+    date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
+
+    # Writes headers
+    worksheet.write(0, 0, "Data")
+    worksheet.write(0, 1, "Valor")
+
+    # Writes the data
+    for (i, item) in enumerate(json_data['observations']):
+        date_obj = date.fromisoformat(item['date'])
+        worksheet.write_datetime(i + 1, 0, date_obj, date_format)
+
+        try:
+            worksheet.write(i + 1, 1, float(item['value']))
+        except:
+            worksheet.write_formula(i + 1, 1, '=NA()')
+
+    return workbook, worksheet
 
 
 if __name__=='__main__':
