@@ -15,7 +15,6 @@ def main():
     
     json_data = read_json()
     
-    #series_list = json_to_list(json_data)
     workbook, worksheet = make_excel(json_data)
 
 
@@ -45,26 +44,6 @@ def get_json() -> dict:
         sys.exit(f"Something went wrong at the FED. Status code: {json_data.status_code}")
 
     return json_data.text
-
-
-# Converts json object to list suitable for using with sidra_helpers
-def json_to_list(json_data: dict) -> list[dict]:
-    series_list = []
-    
-    observations = json_data['observations']
-    for item in observations:
-        try:
-            dict_to_add = {
-                'date': date.fromisoformat(item['date']),
-                'value': float(item['value'])
-            }
-        except:
-            dict_to_add = {
-                'date': date.fromisoformat(item['date']),
-                'value': 0
-            }      
-    
-    return series_list
 
 
 def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
