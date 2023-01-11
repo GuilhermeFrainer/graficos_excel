@@ -5,7 +5,6 @@ import sys
 import json
 from datetime import date
 import sidra_helpers
-from pprint import pprint
 import xlsxwriter
 
 
@@ -13,14 +12,18 @@ series_length = 0
 
 
 def main():
-    #json_data = get_json()
-    #save_json(json_data)
-    
-    json_data = read_json()
+    json_data = get_json()
     
     workbook, worksheet = make_excel(json_data)
     make_chart(workbook)
 
+    credits = [
+        'Arquivo feito em Python',
+        'Link do código: https://github.com/GuilhermeFrainer/graficos_excel',
+        'Fonte dos dados:',
+        'API do FED de São Luís: https://fred.stlouisfed.org/docs/api/fred/'
+    ]
+    sidra_helpers.make_credits(credits, workbook)
 
     workbook.close()
 
@@ -40,14 +43,14 @@ def save_json(json_data: dict):
 
 # Gets json data from the FRED API
 def get_json() -> dict:
-    request = f"series_id=DGS10&observation_start={config.SERIES_START}&observation_end={config.SERIES_END}&api_key={API_KEY}&file_type=json"
+    request = f"series_id=DEXUSEU&observation_start={config.SERIES_START}&observation_end={config.SERIES_END}&api_key={API_KEY}&file_type=json"
     request = f"https://api.stlouisfed.org/fred/series/observations?{request}"
 
     json_data = requests.get(request)
     if json_data.status_code != 200:
         sys.exit(f"Something went wrong at the FED. Status code: {json_data.status_code}")
 
-    return json_data.text
+    return json.loads(json_data.text)
 
 
 def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
