@@ -1,0 +1,4 @@
+SERIES_START = "2022-01-01"
+SERIES_END = "2022-12-31"
+
+FILE_PATH = "../files/"
