@@ -28,19 +28,6 @@ def main():
     workbook.close()
 
 
-# TEMPORARY
-def read_json() -> dict:
-    file = open('data.json')
-    json_data = json.load(file)
-    return json.loads(json_data)
-
-
-# TEMPORARY
-def save_json(json_data: dict):
-    with open('data.json', 'w') as file:
-        json.dump(json_data, file)
-
-
 # Gets json data from the FRED API
 def get_json() -> dict:
     request = f"series_id=DEXUSEU&observation_start={config.SERIES_START}&observation_end={config.SERIES_END}&api_key={API_KEY}&file_type=json"
