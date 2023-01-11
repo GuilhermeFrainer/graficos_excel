@@ -9,6 +9,9 @@ from pprint import pprint
 import xlsxwriter
 
 
+series_length = 0
+
+
 def main():
     #json_data = get_json()
     #save_json(json_data)
@@ -16,6 +19,7 @@ def main():
     json_data = read_json()
     
     workbook, worksheet = make_excel(json_data)
+    make_chart(workbook)
 
 
     workbook.close()
@@ -47,8 +51,13 @@ def get_json() -> dict:
 
 
 def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
+    # Saves global variable for later
+    global series_length
+    series_length = len(json_data['observations'])
+
+    
     today = date.today().isoformat()
-    filename = f"{config.FILE_PATH}Cãmbio dólar-euro {today}.xlsx"
+    filename = f"{config.FILE_PATH}Câmbio dólar-euro {today}.xlsx"
     
     workbook = xlsxwriter.Workbook(filename)
     worksheet = workbook.add_worksheet("Dados")
@@ -71,6 +80,23 @@ def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workboo
             worksheet.write_formula(i + 1, 1, '=NA()')
 
     return workbook, worksheet
+
+
+def make_chart(workbook: xlsxwriter.Workbook):
+    global series_length
+    
+    chart = workbook.add_chart({'type': 'line'})
+    chart.add_series({
+        'categories': f'=Dados!$A$2:$A${series_length + 2}',
+        'values': f'=Dados!$B$2:$B${series_length + 2}'
+    })
+
+    chart.set_x_axis(config.x_config)
+    chart.set_y_axis(config.y_config)
+    chart.set_legend(config.legend_config)
+
+    chartsheet = workbook.add_chartsheet('Gráfico')
+    chartsheet.set_chart(chart)
 
 
 if __name__=='__main__':
