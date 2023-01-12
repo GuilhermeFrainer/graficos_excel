@@ -9,7 +9,7 @@ This repository was created to keep the Python scripts I wrote to generate Excel
 # Fontes / Sources
 
 dollar_euro: DEXUSEU from the FRED API  
-ipca: API do Sidra para o IPCA e API do Bacen para expectativas
+ipca: tabela 1737 da API do SIDRA e API do Bacen para expectativas
 
 # Links
 
