@@ -19,7 +19,7 @@ def main():
     ipca_data = sidra_helpers.api_to_list(ipca_data)
     ipca_size = sidra_helpers.get_series_size()
 
-    expectations = get_expectations()
+    expectations = get_expectations(ipca_data)
     expectations_size = len(expectations[0])
     series_size = ipca_size + expectations_size
 
@@ -76,7 +76,7 @@ def join_lists(ipca_data: list[list], expectations_data: list[list]) -> list[lis
 
 
 # Gets inflation expectations from the BACEN API
-def get_expectations() -> list[list]:
+def get_expectations(ipca_data: list[list]) -> list[list]:
     r = requests.get(config.BACEN_API_ADDRESS)
     
     if r.status_code != 200:
@@ -91,7 +91,12 @@ def get_expectations() -> list[list]:
         
         month, year = item['DataReferencia'].split('/')
         date = f'{year}-{month}-01'
-        dates.append(datetime.date.fromisoformat(date))
+        date = datetime.date.fromisoformat(date)
+        # Avoids having expectations and actual data for the same period
+        if date in ipca_data[0]:
+            continue
+        
+        dates.append(date)
         monthly_data.append(item['Mediana'])
 
 
