@@ -2,3 +2,5 @@ files/
 dollar_euro/api_key.py
 __pycache__
 *.json
+*.xlsx
+*.xls
