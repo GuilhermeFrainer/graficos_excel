@@ -1,4 +1,4 @@
-from xlsxwriter import Workbook
+import xlsxwriter
 from urllib.request import urlretrieve
 from data import Data
 from math import isnan
@@ -23,7 +23,7 @@ def main():
 
 
 # Writes formulas whose values will later be used to make the chart
-def write_formulas(workbook: Workbook, worksheet):
+def write_formulas(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class):
     global total_entries
     
     # Writes headers
@@ -39,7 +39,7 @@ def write_formulas(workbook: Workbook, worksheet):
         worksheet.write_formula(f'E{i + 2}', f'=C{i + 2}/1000', number_format)
 
 
-def make_chart(workbook: Workbook):
+def make_chart(workbook: xlsxwriter.Workbook):
     global total_entries
 
     chartsheet = workbook.add_chartsheet('Gráfico')
@@ -105,7 +105,7 @@ def caged_to_excel():
     total_entries = len(entries)
 
     # Writes into Excel file
-    workbook = Workbook(f'{FILE_PATH}CAGED {datetime.date.today().isoformat()}.xlsx')
+    workbook = xlsxwriter.Workbook(f'{FILE_PATH}CAGED {datetime.date.today().isoformat()}.xlsx')
     worksheet = workbook.add_worksheet('Dados')
 
     # Writes headers
@@ -140,7 +140,7 @@ def get_data():
 
 
 # Writes sheet with sources and link to this code
-def credits(workbook: Workbook):
+def credits(workbook: xlsxwriter.Workbook):
     worksheet = workbook.add_worksheet('Informações')
 
     worksheet.write('A1', 'Tabela feita automaticamente em Python. Código em:')
