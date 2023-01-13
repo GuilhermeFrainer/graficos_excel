@@ -70,8 +70,8 @@ def make_chart(workbook: Workbook):
     column_chart.set_legend(legend_config)
 
     chartsheet.set_chart(column_chart)
-    
-    
+
+
 # Extracts the necessary data from the caged sheet. Returns workbook and worksheet.    
 def caged_to_excel():
     global total_entries
@@ -119,7 +119,7 @@ def caged_to_excel():
         worksheet.write(i + 1, 1, entries[i].value)
 
     return workbook, worksheet
-        
+  
 
 # Gets the Excel files from the CAGED website
 def get_data():    
