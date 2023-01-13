@@ -69,6 +69,9 @@ def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workboo
         except:
             worksheet.write_formula(i + 1, 1, '=NA()')
 
+    # Resizes first column so that dates are visible
+    worksheet.set_column_pixels(0, 0, 75)
+
     return workbook, worksheet
 
 
