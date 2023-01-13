@@ -2,11 +2,12 @@ import xlsxwriter
 from urllib.request import urlretrieve
 from data import Data
 from math import isnan
-from config import *
+import config
 import requests
 import bs4
 import pandas as pd
 import datetime
+import sidra_helpers as sh
 
 
 total_entries = None
@@ -17,7 +18,16 @@ def main():
     workbook, worksheet = caged_to_excel()
     write_formulas(workbook, worksheet)
     make_chart(workbook)
-    credits(workbook)
+    
+    credits = [
+        'Tabela feita automaticamente em Python. Código em:',
+        'https://github.com/GuilhermeFrainer/caged',
+        'Fonte dos dados de antes de 2020:',
+        'http://pdet.mte.gov.br/caged?view=default%20-%20Tabelas%20-%20Tabela%202',
+        'Fonte dos dados de 2020 em diante:',
+        'http://pdet.mte.gov.br/novo-caged?view=default'
+    ]
+    sh.make_credits(credits, workbook)
 
     workbook.close()
 
@@ -58,22 +68,23 @@ def make_chart(workbook: xlsxwriter.Workbook):
         'categories': f'=Dados!$A$14:$A${total_entries + 1}',
         'values': f'=Dados!$E$14:$E${total_entries + 1}',
         'name': 'Acumulado 12 Meses',
-        'y2_axis': True
+        'y2_axis': True,
+        'data_labels': {'font': {'color': '#be4b48'}}
     })
 
-    line_chart.set_y2_axis(y2_axis_config)
+    line_chart.set_y2_axis(config.y2_axis_config)
 
     # Combines and outputs the two
     column_chart.combine(line_chart)
-    column_chart.set_x_axis(x_axis_config)
-    column_chart.set_y_axis(y_axis_config)
-    column_chart.set_legend(legend_config)
+    column_chart.set_x_axis(config.x_axis_config)
+    column_chart.set_y_axis(config.y_axis_config)
+    column_chart.set_legend(config.legend_config)
 
     chartsheet.set_chart(column_chart)
 
 
 # Extracts the necessary data from the caged sheet. Returns workbook and worksheet.    
-def caged_to_excel():
+def caged_to_excel() -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
     global total_entries
     
     # Gets old data as list
@@ -92,7 +103,6 @@ def caged_to_excel():
     entries = []
 
     for i in range(len(balance)):
-        
         try:
             if isnan(dates[i]) or isnan(balance[i]):
                 break
@@ -105,7 +115,7 @@ def caged_to_excel():
     total_entries = len(entries)
 
     # Writes into Excel file
-    workbook = xlsxwriter.Workbook(f'{FILE_PATH}CAGED {datetime.date.today().isoformat()}.xlsx')
+    workbook = xlsxwriter.Workbook(f'{config.FILE_PATH}CAGED {datetime.date.today().isoformat()}.xlsx')
     worksheet = workbook.add_worksheet('Dados')
 
     # Writes headers
@@ -124,8 +134,12 @@ def caged_to_excel():
 # Gets the Excel files from the CAGED website
 def get_data():    
     # Gets data prior to 2020
-    old_url = 'http://pdet.mte.gov.br/images/ftp//dezembro2019/nacionais/4-tabelas.xls'
-    urlretrieve(old_url, 'Tabela velho caged.xls')
+    try:
+        file = open('Tabela velho caged.xls')
+        file.close()
+    except:
+        old_url = 'http://pdet.mte.gov.br/images/ftp//dezembro2019/nacionais/4-tabelas.xls'
+        urlretrieve(old_url, 'Tabela velho caged.xls')
 
     # Gets data for 2020 onwards
     new_url = requests.get('http://pdet.mte.gov.br/novo-caged?view=default')
@@ -137,18 +151,6 @@ def get_data():
     new_link = f'http://pdet.mte.gov.br{new_link}'
     urlretrieve(new_link, 'Tabela caged.xlsx')
     print("Successfully downloaded file")
-
-
-# Writes sheet with sources and link to this code
-def credits(workbook: xlsxwriter.Workbook):
-    worksheet = workbook.add_worksheet('Informações')
-
-    worksheet.write('A1', 'Tabela feita automaticamente em Python. Código em:')
-    worksheet.write('A2', 'https://github.com/GuilhermeFrainer/caged')
-    worksheet.write('A3', 'Fonte dos dados de antes de 2020:')
-    worksheet.write('A4', 'http://pdet.mte.gov.br/caged?view=default%20-%20Tabelas%20-%20Tabela%202')
-    worksheet.write('A5', 'Fonte dos dados de 2020 em diante:')
-    worksheet.write('A6', 'http://pdet.mte.gov.br/novo-caged?view=default')
 
 
 if __name__ == '__main__':
