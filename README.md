@@ -10,7 +10,8 @@ This repository was created to keep the Python scripts I wrote to generate Excel
 
 caged: CAGED e Novo CAGED do PDET
 dollar_euro: DEXUSEU from the FRED API  
-ipca: tabela 1737 da API do SIDRA e API do Bacen para expectativas
+emprego: tabelas 6318 e 6381 do SIDRA  
+ipca: tabela 1737 do SIDRA e API do Bacen para expectativas
 
 # Links
 
