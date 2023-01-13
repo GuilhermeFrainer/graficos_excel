@@ -9,6 +9,7 @@ This repository was created to keep the Python scripts that generate Excel chart
 # Fontes / Sources
 
 caged: CAGED e Novo CAGED do PDET  
+cpi: BLS API  
 dollar_euro: DEXUSEU from the FRED API  
 emprego: tabelas 6318 e 6381 do SIDRA  
 ipca: tabela 1737 do SIDRA e API do Bacen para expectativas
@@ -19,4 +20,5 @@ ipca: tabela 1737 do SIDRA e API do Bacen para expectativas
 [SIDRA](https://servicodados.ibge.gov.br/api/docs/agregados?versao=3)  
 [BACEN](https://dadosabertos.bcb.gov.br/dataset/expectativas-mercado/resource/d420a704-75a7-4f45-8f4b-0fca813c70f0)  
 [Novo CAGED](http://pdet.mte.gov.br/novo-caged?view=default)  
-[Velho CAGED](http://pdet.mte.gov.br/caged)
+[Velho CAGED](http://pdet.mte.gov.br/caged)  
+[BLS](https://www.bls.gov/developers/home.htm)

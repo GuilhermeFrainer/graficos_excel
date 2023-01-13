@@ -20,3 +20,5 @@ legend_config = {
     'position': 'bottom',
     'font': {'size': 12, 'name': 'Calibri'}
 }
+
+FILE_PATH = "../files/"

@@ -1,8 +1,8 @@
 from numpy import full
-from preferences import *
-from sidra_helpers import make_excel
+import config
+import sidra_helpers
 from sys import exit
-from api_key import *
+from api_key import API_KEY
 import xlsxwriter
 import datetime
 import requests
@@ -13,23 +13,27 @@ total_entries = 0
 
 
 def main():
-    
     full_cpi, core_cpi = get_data()
     
     series_list = bls_to_list(full_cpi, core_cpi)
     headers = ['Período', 'Índice cheio', 'Núcleo de inflação']
 
-    workbook, worksheet = make_excel('CPI', series_list, headers)
+    workbook, worksheet = sidra_helpers.make_excel(f'{config.FILE_PATH}CPI', series_list, headers)
     make_chart(workbook)
-    credits(workbook)
+    credits = [
+    'Arquivo criado em Python usando a API do Bureau of Labor Statistics.',
+    'Link do código: https://github.com/GuilhermeFrainer/cpi',
+    'BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.'
+    ]
+    sidra_helpers.make_credits(credits, workbook)
+
     workbook.close()
 
 
 def get_data():
-    
     full_cpi = []
     core_cpi = []
-    start_year = int(START_YEAR)
+    start_year = int(config.START_YEAR)
     end_year = start_year + 19
 
     while start_year <= datetime.date.today().year:
@@ -44,7 +48,6 @@ def get_data():
 
 
 def make_chart(workbook : xlsxwriter.Workbook):
-    
     chartsheet = workbook.add_chartsheet('Gráfico')
     chart = workbook.add_chart({'type': 'line'})
 
@@ -62,16 +65,15 @@ def make_chart(workbook : xlsxwriter.Workbook):
         'name': 'Núcleo de inflação'
     })
 
-    chart.set_x_axis(x_axis_config)
-    chart.set_y_axis(y_axis_config)
-    chart.set_legend(legend_config)
+    chart.set_x_axis(config.x_axis_config)
+    chart.set_y_axis(config.y_axis_config)
+    chart.set_legend(config.legend_config)
 
     chartsheet.set_chart(chart)
 
 
 # Converts data from BLS into list with dates and values
 def bls_to_list(full_cpi : list[dict], core_cpi : list[dict]) -> list[list]:
-
     global total_entries
     full_cpi_list = []
     core_cpi_list = []
@@ -90,7 +92,6 @@ def bls_to_list(full_cpi : list[dict], core_cpi : list[dict]) -> list[list]:
 
 # Takes in any cpi list, which means it assumes they both will have the same length
 def get_date_list(cpi : list[dict]) -> list[datetime.date]:
-    
     date_list = []
 
     for date in reversed(cpi):
@@ -101,7 +102,6 @@ def get_date_list(cpi : list[dict]) -> list[datetime.date]:
 
 
 def load_data():
-    
     with open('json_data.json', 'r') as file:
         json_data = json.load(file)
 
@@ -109,14 +109,12 @@ def load_data():
 
 
 def save_data(json_data):
-
     with open('json_data.json', 'w') as file:
         json.dump(json_data, file, indent=4)
 
 
 # Gets json object from BLS API
 def get_json(start_year : int, end_year : int) -> dict:
-    
     headers = {'Content-type': 'application/json'}
     data = json.dumps({"seriesid": ['CUUR0000SA0','CUUR0000SA0L1E'],"startyear": str(start_year), "endyear": str(end_year), "calculations": True, 'registrationKey': API_KEY})
     p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
@@ -130,14 +128,6 @@ def get_json(start_year : int, end_year : int) -> dict:
     core_cpi = json_data['Results']['series'][1]['data']
     
     return full_cpi, core_cpi 
-    
-
-def credits(workbook : xlsxwriter.Workbook):
-    
-    worksheet = workbook.add_worksheet('Informações')
-    worksheet.write('A1', 'Arquivo criado em Python usando a API do Bureau of Labor Statistics.')
-    worksheet.write('A2', 'Link do código: https://github.com/GuilhermeFrainer/cpi')
-    worksheet.write('A3', 'BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.')
 
 
 if __name__ == '__main__':
