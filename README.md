@@ -9,7 +9,7 @@ This repository was created to keep the Python scripts that generate Excel chart
 # Fontes / Sources
 
 caged: CAGED e Novo CAGED do PDET  
-cpi: BLS API  
+cpi: CUUR0000SA0 and CUUR0000SA0L1E from the BLS API  
 dollar_euro: DEXUSEU from the FRED API  
 emprego: tabelas 6318 e 6381 do SIDRA  
 ipca: tabela 1737 do SIDRA e API do Bacen para expectativas
