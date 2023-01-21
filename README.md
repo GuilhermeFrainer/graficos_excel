@@ -12,6 +12,7 @@ caged: CAGED e Novo CAGED do PDET
 cpi: CUUR0000SA0 and CUUR0000SA0L1E from the BLS API  
 dollar_euro: DEXUSEU from the FRED API  
 emprego: tabelas 6318 e 6381 do SIDRA  
+indice_vendas: tabelas 8185, 8186, 8159 e 8161 do SIDRA  
 ipca: tabela 1737 do SIDRA e API do Bacen para expectativas
 
 # Links
