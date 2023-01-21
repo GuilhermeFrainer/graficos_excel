@@ -23,7 +23,7 @@ def main():
         'Arquivo feito em Python',
         'Dados obtidos da API do SIDRA'
     ]
-    sidra_helpers.make_credits(credits, workbook)
+    sidra_helpers.make_credits(workbook, credits)
 
     workbook.close()
 

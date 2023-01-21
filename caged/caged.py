@@ -27,7 +27,7 @@ def main():
         'Fonte dos dados de 2020 em diante:',
         'http://pdet.mte.gov.br/novo-caged?view=default'
     ]
-    sh.make_credits(credits, workbook)
+    sh.make_credits(workbook, credits)
 
     workbook.close()
 

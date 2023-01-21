@@ -23,7 +23,7 @@ def main():
         'Fonte dos dados:',
         'API do FED de São Luís: https://fred.stlouisfed.org/docs/api/fred/'
     ]
-    sidra_helpers.make_credits(credits, workbook)
+    sidra_helpers.make_credits(workbook, credits)
 
     workbook.close()
 

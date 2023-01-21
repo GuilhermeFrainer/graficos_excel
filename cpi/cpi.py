@@ -25,7 +25,7 @@ def main():
     'Link do código: https://github.com/GuilhermeFrainer/cpi',
     'BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.'
     ]
-    sidra_helpers.make_credits(credits, workbook)
+    sidra_helpers.make_credits(workbook, credits)
 
     workbook.close()
 

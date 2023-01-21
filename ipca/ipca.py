@@ -37,7 +37,7 @@ def main():
         'API do SIDRA',
         'API do Banco Central do Brasil'
     ]
-    sidra_helpers.make_credits(credits, workbook)
+    sidra_helpers.make_credits(workbook, credits)
     
     workbook.close()
 
