@@ -14,6 +14,7 @@ dollar_euro: DEXUSEU from the FRED API
 emprego: tabelas 6318 e 6381 do SIDRA  
 indice_vendas: tabelas 8185, 8186, 8159 e 8161 do SIDRA  
 ipca: tabela 1737 do SIDRA e API do Bacen para expectativas
+massa_rendimentos: tabela 6392 do SIDRA
 
 # Links
 
