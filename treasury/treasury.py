@@ -54,7 +54,6 @@ def json_to_excel(json_data: dict) -> xlsxwriter.Workbook:
 
     worksheet.write('A1', 'Data')
     worksheet.write('B1', 'Entrada')
-    worksheet.write('C1', 'Saída')
 
     date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
     
