@@ -81,8 +81,8 @@ def make_charts(workbook: xlsxwriter.Workbook) -> None:
     chart.add_series({
         # Varejo
         'name': '=Dados!$B$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 2}',
-        'values': f'=Dados!$B$2:$B${series_size + 2}',
+        'categories': f'=Dados!$A$2:$A${series_size + 1}',
+        'values': f'=Dados!$B$2:$B${series_size + 1}',
         'line': {'color': '#c30c0e'},
         'data_labels': {
             'font': {
@@ -94,8 +94,8 @@ def make_charts(workbook: xlsxwriter.Workbook) -> None:
     chart.add_series({
         # Varejo ampliado
         'name': '=Dados!$C$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 2}',
-        'values': f'=Dados!$C$2:$C${series_size + 2}',
+        'categories': f'=Dados!$A$2:$A${series_size + 1}',
+        'values': f'=Dados!$C$2:$C${series_size + 1}',
         'line': {'color': '#0474c4'},
         'data_labels': {
             'font': {
@@ -107,8 +107,8 @@ def make_charts(workbook: xlsxwriter.Workbook) -> None:
     chart.add_series({
         # Indústria
         'name': '=Dados!$D$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 2}',
-        'values': f'=Dados!$D$2:$D${series_size + 2}',
+        'categories': f'=Dados!$A$2:$A${series_size + 1}',
+        'values': f'=Dados!$D$2:$D${series_size + 1}',
         'line': {'color': '#0db260'},
         'data_labels': {
             'font': {
@@ -120,8 +120,8 @@ def make_charts(workbook: xlsxwriter.Workbook) -> None:
     chart.add_series({
         # Serviços
         'name': '=Dados!$E$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 2}',
-        'values': f'=Dados!$E$2:$E${series_size + 2}',
+        'categories': f'=Dados!$A$2:$A${series_size + 1}',
+        'values': f'=Dados!$E$2:$E${series_size + 1}',
         'line': {'color': '#fbc309'},
         'data_labels': {
             'font': {
@@ -133,10 +133,11 @@ def make_charts(workbook: xlsxwriter.Workbook) -> None:
     chart.add_series({
         # IBC-Br
         'name': '=Dados!$F$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 2}',
-        'values': f'=Dados!$F$2:$F${series_size + 2}',
+        'categories': f'=Dados!$A$2:$A${series_size + 1}',
+        'values': f'=Dados!$F$2:$F${series_size + 1}',
         'line': {'color': '#7030a0'},
         'data_labels': {
+            'num_format': '0.0',
             'font': {
                 'color': '#7030a0',
                 'size': 12,
