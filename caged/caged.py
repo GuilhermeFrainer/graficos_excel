@@ -8,6 +8,7 @@ import bs4
 import pandas as pd
 import datetime
 import sidra_helpers as sh
+import os
 
 
 total_entries = None
@@ -28,7 +29,7 @@ def main():
         'http://pdet.mte.gov.br/novo-caged?view=default'
     ]
     sh.make_credits(workbook, credits)
-
+    os.remove("Tabela caged.xlsx")
     workbook.close()
 
 
@@ -38,15 +39,15 @@ def write_formulas(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook
     
     # Writes headers
     worksheet.write('C1', 'Acumulado 12 meses')
-    worksheet.write('D1', 'Saldo mil')
-    worksheet.write('E1', 'Acumulado 12 meses mil')
+    #worksheet.write('D1', 'Saldo mil')
+    #worksheet.write('E1', 'Acumulado 12 meses mil')
     
     # Writes formulas
     number_format = workbook.add_format({'num_format': '#,##0.0'})
     for i in range(total_entries):
         worksheet.write_formula(f'C{i + 13}', f'=SUM(B{i + 2}:B{i + 13})')
-        worksheet.write_formula(f'D{i + 2}', f'=B{i + 2}/1000', number_format)
-        worksheet.write_formula(f'E{i + 2}', f'=C{i + 2}/1000', number_format)
+        #worksheet.write_formula(f'D{i + 2}', f'=B{i + 2}/1000', number_format)
+        #worksheet.write_formula(f'E{i + 2}', f'=C{i + 2}/1000', number_format)
 
 
 def make_chart(workbook: xlsxwriter.Workbook):
@@ -58,16 +59,16 @@ def make_chart(workbook: xlsxwriter.Workbook):
     column_chart = workbook.add_chart({'type': 'column'})
     column_chart.add_series({
         'categories': f'=Dados!$A$14:$A${total_entries + 1}',
-        'values': f'=Dados!$D$14:$D${total_entries + 1}',
-        'name': 'Saldo Mensal'
+        'values': f'=Dados!$B$14:$B${total_entries + 1}',
+        'name': f'=Dados!$B$1'
     })
     
     # Makes line chart with accumulated values
     line_chart = workbook.add_chart({'type': 'line'})
     line_chart.add_series({
         'categories': f'=Dados!$A$14:$A${total_entries + 1}',
-        'values': f'=Dados!$E$14:$E${total_entries + 1}',
-        'name': 'Acumulado 12 Meses',
+        'values': f'=Dados!$C$14:$C${total_entries + 1}',
+        'name': f'=Dados!$C$1',
         'y2_axis': True,
         'data_labels': {'font': {'color': '#be4b48'}}
     })
@@ -93,7 +94,7 @@ def caged_to_excel() -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet
     old_balance, old_dates = old_balance.to_list(), old_dates.to_list()
 
     # Gets newer data as list
-    new_df = pd.read_excel('tabela caged.xlsx', sheet_name='Tabela 5.1', header=4)
+    new_df = pd.read_excel('Tabela caged.xlsx', sheet_name='Tabela 5.1', header=4)
     new_balance, new_dates = new_df['Saldos'], new_df['Mês']
     new_balance, new_dates = new_balance.to_list(), new_dates.to_list()
 
@@ -120,10 +121,11 @@ def caged_to_excel() -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet
 
     # Writes headers
     worksheet.write('A1', 'Mês')
-    worksheet.write('B1', 'Saldo')
+    worksheet.write('B1', 'Saldo mensal')
 
     # Writes data
     date_format = workbook.add_format({'num_format': 'mmm-yy'})
+    num_format = workbook.add_format({'num_format': '#.0,'})
     for i in range(total_entries):
         worksheet.write_datetime(i + 1, 0, entries[i].date, date_format)
         worksheet.write(i + 1, 1, entries[i].value)

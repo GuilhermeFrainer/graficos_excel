@@ -4,24 +4,26 @@ x_axis_config = {
     'num_format': 'mmm-yy',
     'label_position': 'low',
     'major_unit': 1,
-    'major_unit_type': 'years'
+    'major_unit_type': 'years',
 }
 
 y_axis_config = {
     'num_font': {'name': 'Calibri', 'size': 12},
-    'min': -1000,
-    'max': 1500,
-    'major_unit': 500,
-    'minor_unit': 100,
-    'major_gridlines': {'visible': False}
+    'min': -1000000,
+    'max': 1000000,
+    'major_unit': 500000,
+    'minor_unit': 100000,
+    'major_gridlines': {'visible': False},
+    'num_format': '#,##0.0',
 }
 
 y2_axis_config = {
     'num_font': {'name': 'Calibri', 'size': 12},
-    'min': -2000,
-    'max': 3200,
-    'major_unit': 1000,
-    'minor_unit': 200
+    'min': -2000000,
+    'max': 3200000,
+    'major_unit': 1000000,
+    'minor_unit': 200000,
+    'num_format': '#,##0.0',
 }
 
 legend_config = {
