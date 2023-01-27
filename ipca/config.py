@@ -1,8 +1,6 @@
 # All dates must be in the yyyy-mm-dd format
 SERIES_START_DATE = "2019-01-01"
 CHART_START_DATE = "2021-01-01"
-LAST_FOCUS_SURVEY = "2023-01-06"
-BACEN_API_ADDRESS = f"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24filter=Indicador%20eq%20'IPCA'%20and%20Data%20eq%20'{LAST_FOCUS_SURVEY}'%20and%20baseCalculo%20eq%201"
 FILE_PATH = "../files/"
 
 x_axis_config = {

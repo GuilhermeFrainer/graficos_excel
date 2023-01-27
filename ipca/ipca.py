@@ -1,4 +1,5 @@
 from sidrapy import get_table
+import sys
 import sidra_helpers
 import requests
 import config
@@ -11,7 +12,6 @@ ipca_size = 0
 expectations_size = 0
 
 def main():
-    
     global ipca_size, series_size, expectations_size
 
     period = sidra_helpers.get_period(config.SERIES_START_DATE)
@@ -44,7 +44,6 @@ def main():
 
 # Calculates the monthly 12-month inflation rate
 def calculate_yoy(workbook: Workbook, worksheet: Workbook.worksheet_class) -> tuple[Workbook, Workbook.worksheet_class]:
-    
     global ipca_size, series_size
 
     # Calculates the changes to inflation based on expectations
@@ -60,7 +59,6 @@ def calculate_yoy(workbook: Workbook, worksheet: Workbook.worksheet_class) -> tu
 
 # Puts expectations into the same lists as the actual values
 def join_lists(ipca_data: list[list], expectations_data: list[list]) -> list[list]:
-
     ipca_data[0].extend(expectations_data[0])
     
     # Adds zeros to all the months with actual values
@@ -75,12 +73,24 @@ def join_lists(ipca_data: list[list], expectations_data: list[list]) -> list[lis
     return ipca_data
 
 
+# Gets last Focus survey date from the Bacen API
+def get_last_focus_survey_date() -> str:
+    BACEN_API = f"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24top=1&%24filter=Indicador%20eq%20'IPCA'%20and%20baseCalculo%20eq%201"
+    r = requests.get(BACEN_API)
+    if r.status_code != 200:
+        sys.exit(f"Something went wrong while requesting Focus date. Error code: {r.status_code}")
+    json_data = json.loads(r.text)
+    return json_data['value'][0]['Data']
+
+
 # Gets inflation expectations from the BACEN API
 def get_expectations(ipca_data: list[list]) -> list[list]:
-    r = requests.get(config.BACEN_API_ADDRESS)
+    last_focus_survey = get_last_focus_survey_date()
+    BACEN_API_ADDRESS = f"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24filter=Indicador%20eq%20'IPCA'%20and%20Data%20eq%20'{last_focus_survey}'%20and%20baseCalculo%20eq%201"
+    r = requests.get(BACEN_API_ADDRESS)
     
     if r.status_code != 200:
-        print(f"Something went wrong with the Bacen API. Error code: {r.status_code}")
+        sys.exit(f"Something went wrong with the Bacen API. Error code: {r.status_code}")
 
     json_data = json.loads(r.text)
 
@@ -88,7 +98,6 @@ def get_expectations(ipca_data: list[list]) -> list[list]:
     monthly_data = []
 
     for item in json_data['value'][::-1]:
-        
         month, year = item['DataReferencia'].split('/')
         date = f'{year}-{month}-01'
         date = datetime.date.fromisoformat(date)
@@ -99,12 +108,10 @@ def get_expectations(ipca_data: list[list]) -> list[list]:
         dates.append(date)
         monthly_data.append(item['Mediana'])
 
-
     return [dates, monthly_data]
 
 
 def get_ipca_data(period : str) -> list[list]:
-    
     index_data = get_table(
         table_code="1737", 
         territorial_level="1",
@@ -147,7 +154,6 @@ def find_chart_start() -> int:
 
 
 def make_chart(workbook: Workbook) -> None:
-    
     global ipca_size, expectations_size, series_size
 
     chart_start = find_chart_start()
