@@ -39,15 +39,11 @@ def write_formulas(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook
     
     # Writes headers
     worksheet.write('C1', 'Acumulado 12 meses')
-    #worksheet.write('D1', 'Saldo mil')
-    #worksheet.write('E1', 'Acumulado 12 meses mil')
     
     # Writes formulas
     number_format = workbook.add_format({'num_format': '#,##0.0'})
     for i in range(total_entries):
         worksheet.write_formula(f'C{i + 13}', f'=SUM(B{i + 2}:B{i + 13})')
-        #worksheet.write_formula(f'D{i + 2}', f'=B{i + 2}/1000', number_format)
-        #worksheet.write_formula(f'E{i + 2}', f'=C{i + 2}/1000', number_format)
 
 
 def make_chart(workbook: xlsxwriter.Workbook):
