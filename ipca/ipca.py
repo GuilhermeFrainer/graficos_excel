@@ -2,7 +2,6 @@ from sidrapy import get_table
 import sys
 import sidra_helpers
 import requests
-import config
 from xlsxwriter import Workbook
 import json
 import datetime
@@ -14,7 +13,8 @@ expectations_size = 0
 def main():
     global ipca_size, series_size, expectations_size
 
-    period = sidra_helpers.get_period(config.SERIES_START_DATE)
+    config = sidra_helpers.get_config("ipca_config.json")
+    period = sidra_helpers.get_period(config['series_start_date'])
     ipca_data = get_ipca_data(period)
     ipca_data = sidra_helpers.api_to_list(ipca_data)
     ipca_size = sidra_helpers.get_series_size()
@@ -26,10 +26,10 @@ def main():
     ipca_data = join_lists(ipca_data, expectations)
 
     headers = ["Mês", "Índice", "T/T-1", "Acumulado 12 meses", "Expectativas"]
-    workbook, worksheet = sidra_helpers.make_excel(f"{config.FILE_PATH}IPCA", ipca_data, headers)
+    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}IPCA", ipca_data, headers)
     workbook, worksheet = calculate_yoy(workbook, worksheet)
 
-    make_chart(workbook)
+    make_chart(workbook, config)
     credits = [
         'Arquivo feito em Python. Link do código:',
         'https://github.com/GuilhermeFrainer/IPCA',
@@ -146,17 +146,17 @@ def get_ipca_data(period : str) -> list[list]:
 
 
 # Returns chart starting point (in the Excel file) by calculating the differnece (in months) between the chart starting point and the series'
-def find_chart_start() -> int:
-    series_start = config.SERIES_START_DATE.split("-")
-    chart_start = config.CHART_START_DATE.split("-")
+def find_chart_start(config: dict) -> int:
+    series_start = config['series_start_date'].split("-")
+    chart_start = config['chart_start_date'].split("-")
     difference = (int(chart_start[0]) - int(series_start[0])) * 12 + (int(chart_start[1]) - int(series_start[1]))
     return difference
 
 
-def make_chart(workbook: Workbook) -> None:
+def make_chart(workbook: Workbook, config: dict) -> None:
     global ipca_size, expectations_size, series_size
 
-    chart_start = find_chart_start()
+    chart_start = find_chart_start(config)
 
     chartsheet = workbook.add_chartsheet('Gráfico')
 
@@ -202,13 +202,13 @@ def make_chart(workbook: Workbook) -> None:
         }
     })
 
-    line_chart.set_y2_axis(config.y2_axis_config)
+    line_chart.set_y2_axis(config['y2_axis'])
 
     # Combines both charts
     column_chart.combine(line_chart)
-    column_chart.set_x_axis(config.x_axis_config)
-    column_chart.set_y_axis(config.y_axis_config)
-    column_chart.set_legend(config.legend_config)
+    column_chart.set_x_axis(config['x_axis'])
+    column_chart.set_y_axis(config['y_axis'])
+    column_chart.set_legend(config['legend'])
 
     chartsheet.set_chart(column_chart)
 
