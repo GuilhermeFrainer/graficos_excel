@@ -11,7 +11,7 @@ series_length = 0
 
 
 def main():
-    config = get_config("config.json")
+    config = sidra_helpers.get_config("config.json")
     json_data = get_json(config)
     
     workbook, worksheet = make_excel(json_data, config)
@@ -91,16 +91,6 @@ def make_chart(workbook: xlsxwriter.Workbook, config: dict):
 
     chartsheet = workbook.add_chartsheet('Gráfico')
     chartsheet.set_chart(chart)
-
-
-# Reads config from json file
-def get_config(path: str) -> dict:
-    try:
-        with open(path, 'r') as file:
-            config = json.load(file)
-    except FileNotFoundError:
-        sys.exit("Config file not found")
-    return config
 
 
 if __name__=='__main__':

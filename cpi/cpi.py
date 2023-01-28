@@ -11,7 +11,7 @@ total_entries = 0
 
 
 def main():
-    config = get_config("config.json")
+    config = sidra_helpers.get_config("config.json")
     full_cpi, core_cpi = get_data(config)
     
     series_list = bls_to_list(full_cpi, core_cpi)
@@ -129,16 +129,6 @@ def get_json(start_year : int, end_year : int) -> dict:
     core_cpi = json_data['Results']['series'][1]['data']
     
     return full_cpi, core_cpi 
-
-
-# Reads config from json file
-def get_config(path: str) -> dict:
-    try:
-        with open(path, 'r') as file:
-            config = json.load(file)
-    except FileNotFoundError:
-        sys.exit("Config file not found")
-    return config
 
 
 if __name__ == '__main__':

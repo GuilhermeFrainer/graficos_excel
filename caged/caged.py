@@ -17,7 +17,7 @@ total_entries = None
 
 def main():
     get_data()
-    config = get_config("config.json")
+    config = sh.get_config("config.json")
     workbook, worksheet = caged_to_excel(config)
     write_formulas(workbook, worksheet)
     make_chart(workbook, config)
@@ -154,16 +154,6 @@ def get_data():
     new_link = f'http://pdet.mte.gov.br{new_link}'
     urlretrieve(new_link, 'Tabela caged.xlsx')
     print("Successfully downloaded file")
-
-
-# Reads config from json file
-def get_config(path: str) -> dict:
-    try:
-        with open(path, 'r') as file:
-            config = json.load(file)
-    except FileNotFoundError:
-        sys.exit("Config file not found")
-    return config
 
 
 if __name__ == '__main__':

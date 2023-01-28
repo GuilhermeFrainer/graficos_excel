@@ -1,6 +1,5 @@
 import sidra_helpers
 from sidrapy import get_table
-import pea_config
 import xlsxwriter
 
 
@@ -10,15 +9,16 @@ series_size = 0
 def main():
     global series_size
 
-    period = sidra_helpers.get_period(pea_config.START_DATE)
+    config = sidra_helpers.get_config("pea_config.json")
+    period = sidra_helpers.get_period(config['start_date'])
     sidra_data = get_data(period)
     sidra_data = sidra_helpers.api_to_list(sidra_data)
     headers = ['Mês', 'Pop. Ocupada', 'PEA']
-    workbook, worksheet = sidra_helpers.make_excel(f'{pea_config.FILE_PATH}PEA e ocupados', sidra_data, headers)
+    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}PEA e ocupados", sidra_data, headers)
 
     series_size = sidra_helpers.get_series_size()
 
-    make_chart(workbook)
+    make_chart(workbook, config)
     credits = [
         'Arquivo feito em Python',
         'Dados obtidos da API do SIDRA'
@@ -28,7 +28,7 @@ def main():
     workbook.close()
 
 
-def make_chart(workbook : xlsxwriter.Workbook):
+def make_chart(workbook : xlsxwriter.Workbook, config: dict):
     chartsheet = workbook.add_chartsheet('Gráfico')
     chart = workbook.add_chart({'type': 'line'})
 
@@ -52,9 +52,9 @@ def make_chart(workbook : xlsxwriter.Workbook):
         }
     })
 
-    chart.set_x_axis(pea_config.x_axis)
-    chart.set_y_axis(pea_config.y_axis)
-    chart.set_legend(pea_config.legend)
+    chart.set_x_axis(config['x_axis'])
+    chart.set_y_axis(config['y_axis'])
+    chart.set_legend(config['legend'])
 
     chartsheet.set_chart(chart)
 
