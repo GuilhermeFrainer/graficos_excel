@@ -1,5 +1,4 @@
 from api_key import API_KEY
-import config
 import requests
 import sys
 import json
@@ -12,10 +11,11 @@ series_length = 0
 
 
 def main():
-    json_data = get_json()
+    config = get_config("config.json")
+    json_data = get_json(config)
     
-    workbook, worksheet = make_excel(json_data)
-    make_chart(workbook)
+    workbook, worksheet = make_excel(json_data, config)
+    make_chart(workbook, config)
 
     credits = [
         'Arquivo feito em Python',
@@ -29,8 +29,8 @@ def main():
 
 
 # Gets json data from the FRED API
-def get_json() -> dict:
-    request = f"series_id=DEXUSEU&observation_start={config.SERIES_START}&observation_end={config.SERIES_END}&api_key={API_KEY}&file_type=json"
+def get_json(config: dict) -> dict:
+    request = f"series_id=DEXUSEU&observation_start={config['series_start']}&observation_end={config['series_end']}&api_key={API_KEY}&file_type=json"
     request = f"https://api.stlouisfed.org/fred/series/observations?{request}"
 
     json_data = requests.get(request)
@@ -40,13 +40,13 @@ def get_json() -> dict:
     return json.loads(json_data.text)
 
 
-def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
+def make_excel(json_data: dict, config: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
     # Saves global variable for later
     global series_length
     series_length = len(json_data['observations'])
     
     today = date.today().isoformat()
-    filename = f"{config.FILE_PATH}Câmbio dólar-euro {today}.xlsx"
+    filename = f"{config['file_path']}Câmbio dólar-euro {today}.xlsx"
     
     workbook = xlsxwriter.Workbook(filename)
     worksheet = workbook.add_worksheet("Dados")
@@ -75,7 +75,7 @@ def make_excel(json_data: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workboo
     return workbook, worksheet
 
 
-def make_chart(workbook: xlsxwriter.Workbook):
+def make_chart(workbook: xlsxwriter.Workbook, config: dict):
     global series_length
     
     chart = workbook.add_chart({'type': 'line'})
@@ -84,12 +84,23 @@ def make_chart(workbook: xlsxwriter.Workbook):
         'values': f'=Dados!$B$2:$B${series_length + 2}'
     })
 
-    chart.set_x_axis(config.x_config)
-    chart.set_y_axis(config.y_config)
-    chart.set_legend(config.legend_config)
+    config['x_axis']['min'] = date.fromisoformat(config['series_start'])
+    chart.set_x_axis(config['x_axis'])
+    chart.set_y_axis(config['y_axis'])
+    chart.set_legend(config['legend'])
 
     chartsheet = workbook.add_chartsheet('Gráfico')
     chartsheet.set_chart(chart)
+
+
+# Reads config from json file
+def get_config(path: str) -> dict:
+    try:
+        with open(path, 'r') as file:
+            config = json.load(file)
+    except FileNotFoundError:
+        sys.exit("Config file not found")
+    return config
 
 
 if __name__=='__main__':

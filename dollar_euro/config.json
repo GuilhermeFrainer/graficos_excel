@@ -8,6 +8,17 @@
             "name": "Calibri",
             "rotation": -90,
         },
-        "label_position"
-    }
+        "label_position": "low",
+        "date_axis": true,
+        "major_unit": 6,
+        "major_unit_type": "months",
+    },
+    "y_axis": {
+        "num_font" : {"size": 12, "name": "Calibri"},
+        "major_gridlines": {"visible": false},
+        "min": 0.6,
+        "max": 1.8,
+        "major_unit": 0.1,
+    },
+    "legend" {"none": true},
 }
