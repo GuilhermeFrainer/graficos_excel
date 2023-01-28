@@ -1,0 +1,20 @@
+{
+    "file_path": "../files/",
+    "start_date": "2013-01-01",
+    "x_axis": {
+        "num_font": {"name": "Calibri", "size": 12},
+        "date_axis": true,
+        "num_format": "mmm-yy",
+        "label_position": "low",
+        "major_unit": "3",
+        "major_unit_type": "months"
+    },
+    "y_axis": {
+        "num_font": {"name": "Calibri", "size": 12},
+        "min": 215000,
+        "max": 270000,
+        "major_unit": 5000,
+        "major_gridlines": {"visible": false},
+        "num_format": "#.0,"
+    }
+}

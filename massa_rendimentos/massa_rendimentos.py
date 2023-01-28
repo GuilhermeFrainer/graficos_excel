@@ -1,4 +1,3 @@
-import config
 import sidra_helpers as sh
 from sidrapy import get_table
 from xlsxwriter import Workbook
@@ -10,13 +9,14 @@ series_size = 0
 def main():
     global series_size
 
-    period = sh.get_period(config.START_DATE)
+    config = sh.get_config("config.json")
+    period = sh.get_period(config['start_date'])
     earnings_data = get_data(period)
     earnings_data = sh.api_to_list(earnings_data)
     headers = ['Mês', 'Massa de rendimentos']
     series_size = sh.get_series_size()
-    workbook, worksheet = sh.make_excel(f"{config.FILE_PATH}Massa de rendimentos", earnings_data, headers)
-    make_chart(workbook)
+    workbook, worksheet = sh.make_excel(f"{config['file_path']}Massa de rendimentos", earnings_data, headers)
+    make_chart(workbook, config)
 
     credits = [
         'Arquivo feito por um código em Python',
@@ -28,7 +28,7 @@ def main():
     workbook.close()
 
 
-def make_chart(workbook: Workbook) -> None:
+def make_chart(workbook: Workbook, config: dict) -> None:
     chartsheet = workbook.add_chartsheet('Gráfico')
     chart = workbook.add_chart({'type': 'line'})
 
@@ -38,8 +38,8 @@ def make_chart(workbook: Workbook) -> None:
         'data_labels': {'num_format': '#.0,'}
     })
 
-    chart.set_x_axis(config.x_axis_config)
-    chart.set_y_axis(config.y_axis_config)
+    chart.set_x_axis(config['x_axis'])
+    chart.set_y_axis(config['y_axis'])
     chart.set_legend({'none': True})
     chartsheet.set_chart(chart)
 
