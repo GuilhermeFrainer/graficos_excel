@@ -2,13 +2,14 @@ import xlsxwriter
 from urllib.request import urlretrieve
 from data import Data
 from math import isnan
-import config
 import requests
 import bs4
 import pandas as pd
 import datetime
 import sidra_helpers as sh
 import os
+import json
+import sys
 
 
 total_entries = None
@@ -16,9 +17,10 @@ total_entries = None
 
 def main():
     get_data()
-    workbook, worksheet = caged_to_excel()
+    config = get_config()
+    workbook, worksheet = caged_to_excel(config)
     write_formulas(workbook, worksheet)
-    make_chart(workbook)
+    make_chart(workbook, config)
     
     credits = [
         'Tabela feita automaticamente em Python. Código em:',
@@ -42,11 +44,11 @@ def write_formulas(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook
     
     # Writes formulas
     number_format = workbook.add_format({'num_format': '#,##0.0'})
-    for i in range(total_entries):
-        worksheet.write_formula(f'C{i + 13}', f'=SUM(B{i + 2}:B{i + 13})')
+    for i in range(13, total_entries + 2):
+        worksheet.write_formula(f'C{i}', f'=SUM(B{i - 11}:B{i})')
 
 
-def make_chart(workbook: xlsxwriter.Workbook):
+def make_chart(workbook: xlsxwriter.Workbook, config: dict):
     global total_entries
 
     chartsheet = workbook.add_chartsheet('Gráfico')
@@ -66,22 +68,25 @@ def make_chart(workbook: xlsxwriter.Workbook):
         'values': f'=Dados!$C$14:$C${total_entries + 1}',
         'name': f'=Dados!$C$1',
         'y2_axis': True,
-        'data_labels': {'font': {'color': '#be4b48'}}
+        'data_labels': {
+            'font': {'color': '#be4b48'},
+            'num_format': '#,##0.0',
+            }
     })
 
-    line_chart.set_y2_axis(config.y2_axis_config)
+    line_chart.set_y2_axis(config['y2_axis'])
 
     # Combines and outputs the two
     column_chart.combine(line_chart)
-    column_chart.set_x_axis(config.x_axis_config)
-    column_chart.set_y_axis(config.y_axis_config)
-    column_chart.set_legend(config.legend_config)
+    column_chart.set_x_axis(config['x_axis'])
+    column_chart.set_y_axis(config['y_axis'])
+    column_chart.set_legend(config['legend'])
 
     chartsheet.set_chart(column_chart)
 
 
 # Extracts the necessary data from the caged sheet. Returns workbook and worksheet.    
-def caged_to_excel() -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
+def caged_to_excel(config: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
     global total_entries
     
     # Gets old data as list
@@ -112,7 +117,7 @@ def caged_to_excel() -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet
     total_entries = len(entries)
 
     # Writes into Excel file
-    workbook = xlsxwriter.Workbook(f'{config.FILE_PATH}CAGED {datetime.date.today().isoformat()}.xlsx')
+    workbook = xlsxwriter.Workbook(f"{config['file_path']}CAGED {datetime.date.today().isoformat()}.xlsx")
     worksheet = workbook.add_worksheet('Dados')
 
     # Writes headers
@@ -149,6 +154,16 @@ def get_data():
     new_link = f'http://pdet.mte.gov.br{new_link}'
     urlretrieve(new_link, 'Tabela caged.xlsx')
     print("Successfully downloaded file")
+
+
+# Reads config from json file
+def get_config() -> dict:
+    try:
+        with open("config.json", 'r') as file:
+            config = json.load(file)
+    except FileNotFoundError:
+        sys.exit("Config file not found")
+    return config
 
 
 if __name__ == '__main__':
