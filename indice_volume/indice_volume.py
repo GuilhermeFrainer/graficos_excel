@@ -5,21 +5,21 @@ from datetime import date
 import requests
 import json
 import sys
-import config
 
 
 def main():
-    period = sidra_helpers.get_period(config.START_DATE)
+    config = sidra_helpers.get_config("config.json")
+    period = sidra_helpers.get_period(config['start_date'])
     api_data = get_data(period)
     api_data = sidra_helpers.api_to_list(api_data)
     
-    data_list = get_ibc_br()
+    data_list = get_ibc_br(config)
     data_list = calculate_acc(data_list)
     api_data.append(data_list)
 
     headers = ['Mês', 'Varejo', 'Varejo Ampliado', 'Indústria', 'Serviços', 'IBC-Br']
-    workbook, worksheet = sidra_helpers.make_excel(f'{config.FILE_PATH}Índice volume', api_data, headers)
-    make_charts(workbook)
+    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}Índice volume", api_data, headers)
+    make_charts(workbook, config)
     credits = [
         'Arquivo feito em Python. Link do código:',
         'https://github.com/GuilhermeFrainer/graficos_excel',
@@ -74,7 +74,7 @@ def get_data(period: str) -> list[list]:
     return [t8185, t8186, t8159, t8161]
 
 
-def make_charts(workbook: xlsxwriter.Workbook) -> None:
+def make_charts(workbook: xlsxwriter.Workbook, config: dict) -> None:
     series_size = sidra_helpers.get_series_size()
     chart = workbook.add_chart({'type': 'line'})
 
@@ -145,9 +145,9 @@ def make_charts(workbook: xlsxwriter.Workbook) -> None:
         },
     })
 
-    chart.set_x_axis(config.x_axis)
-    chart.set_y_axis(config.y_axis)
-    chart.set_legend(config.legend)
+    chart.set_x_axis(config['x_axis'])
+    chart.set_y_axis(config['y_axis'])
+    chart.set_legend(config['legend'])
 
     chartsheet = workbook.add_chartsheet('Gráfico')
     chartsheet.set_chart(chart)
@@ -168,8 +168,8 @@ def parse_date(iso_date: str) -> str:
 
 
 # Gets IBC-Br data from the Bacen API
-def get_ibc_br() -> list[float]:
-    start_date = parse_date(get_previous_years(config.START_DATE))
+def get_ibc_br(config: dict) -> list[float]:
+    start_date = parse_date(get_previous_years(config['start_date']))
     end_date = parse_date(date.today().isoformat())
     bacen_api_address = f'https://api.bcb.gov.br/dados/serie/bcdata.sgs.24364/dados?formato=json&dataInicial={start_date}&dataFinal={end_date}'
     r = requests.get(bacen_api_address)
