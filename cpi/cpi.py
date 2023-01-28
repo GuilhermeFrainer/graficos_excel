@@ -1,7 +1,5 @@
-from numpy import full
-import config
 import sidra_helpers
-from sys import exit
+import sys
 from api_key import API_KEY
 import xlsxwriter
 import datetime
@@ -13,13 +11,14 @@ total_entries = 0
 
 
 def main():
-    full_cpi, core_cpi = get_data()
+    config = get_config("config.json")
+    full_cpi, core_cpi = get_data(config)
     
     series_list = bls_to_list(full_cpi, core_cpi)
     headers = ['Período', 'Índice cheio', 'Núcleo de inflação']
 
-    workbook, worksheet = sidra_helpers.make_excel(f'{config.FILE_PATH}CPI', series_list, headers)
-    make_chart(workbook)
+    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}CPI", series_list, headers)
+    make_chart(workbook, config)
     credits = [
     'Arquivo criado em Python usando a API do Bureau of Labor Statistics.',
     'Link do código: https://github.com/GuilhermeFrainer/cpi',
@@ -30,10 +29,10 @@ def main():
     workbook.close()
 
 
-def get_data():
+def get_data(config: dict):
     full_cpi = []
     core_cpi = []
-    start_year = int(config.START_YEAR)
+    start_year = int(config['start_year'])
     end_year = start_year + 19
 
     while start_year <= datetime.date.today().year:
@@ -47,7 +46,7 @@ def get_data():
     return full_cpi, core_cpi
 
 
-def make_chart(workbook : xlsxwriter.Workbook):
+def make_chart(workbook : xlsxwriter.Workbook, config: dict):
     chartsheet = workbook.add_chartsheet('Gráfico')
     chart = workbook.add_chart({'type': 'line'})
 
@@ -65,9 +64,9 @@ def make_chart(workbook : xlsxwriter.Workbook):
         'name': 'Núcleo de inflação'
     })
 
-    chart.set_x_axis(config.x_axis_config)
-    chart.set_y_axis(config.y_axis_config)
-    chart.set_legend(config.legend_config)
+    chart.set_x_axis(config['x_axis'])
+    chart.set_y_axis(config['y_axis'])
+    chart.set_legend(config['legend'])
 
     chartsheet.set_chart(chart)
 
@@ -101,6 +100,7 @@ def get_date_list(cpi : list[dict]) -> list[datetime.date]:
     return date_list
 
 
+# For testing purposes. Avoids calling the BLS API multiple times
 def load_data():
     with open('json_data.json', 'r') as file:
         json_data = json.load(file)
@@ -108,6 +108,7 @@ def load_data():
     return json_data
 
 
+# For testing purposes
 def save_data(json_data):
     with open('json_data.json', 'w') as file:
         json.dump(json_data, file, indent=4)
@@ -120,7 +121,7 @@ def get_json(start_year : int, end_year : int) -> dict:
     p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
     
     if p.status_code != 200:
-        exit(f'Something went wrong. Status code: {p.status_code}')
+        sys.exit(f'Something went wrong. Status code: {p.status_code}')
     
     json_data = json.loads(p.text)
 
@@ -128,6 +129,16 @@ def get_json(start_year : int, end_year : int) -> dict:
     core_cpi = json_data['Results']['series'][1]['data']
     
     return full_cpi, core_cpi 
+
+
+# Reads config from json file
+def get_config(path: str) -> dict:
+    try:
+        with open(path, 'r') as file:
+            config = json.load(file)
+    except FileNotFoundError:
+        sys.exit("Config file not found")
+    return config
 
 
 if __name__ == '__main__':
