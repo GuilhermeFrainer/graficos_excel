@@ -1,0 +1,13 @@
+{
+    "series_start": "2000-01-01",
+    "series_end": "2022-12-31",
+    "file_path": "../files/",
+    "x_axis": {
+        "num_font": {
+            "size": 12,
+            "name": "Calibri",
+            "rotation": -90,
+        },
+        "label_position"
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "x_axis": {
+        "num_font":  {
+            "name": "Calibri",
+            "size": 12
+        },
+        "date_axis": true,
+        "num_format": "mmm-yy",
+        "label_position": "low",
+        "major_unit": 1,
+        "major_unit_type": "years"
+    },
+    "y_axis": {
+        "num_font": {
+            "name": "Calibri",
+            "size": 12
+        },
+        "min": -1000000,
+        "max": 1500000,
+        "major_unit": 500000,
+        "minor_unit": 100000,
+        "major_gridlines": {"visible": false},
+        "display_units": "thousands",
+        "display_units_visible": false
+    },
+    "y2_axis": {
+        "num_font": {
+            "name": "Calibri",
+            "size": 12
+        },
+        "min": -2000000,
+        "max": 3200000,
+        "major_unit": 1000000,
+        "minor_unit": 200000,
+        "display_units": "thousands",
+        "display_units_visible": false
+    },
+    "legend": {
+        "position": "bottom",
+        "font": {
+            "name": "Calibri",
+            "size": 12
+        }
+    },
+    "file_path": "../files/"
+}

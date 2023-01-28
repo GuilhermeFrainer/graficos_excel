@@ -1,6 +1,5 @@
 files/
 */api_key.py
 __pycache__
-*.json
 *.xlsx
 *.xls

@@ -1,0 +1,22 @@
+{
+    "start_year": "1965",
+    "file_path": "../files/",
+    "x_axis": {
+        "data_axis": true,
+        "major_unit": 2,
+        "major_unit_type": "years",
+        "label_position": "low",
+        "num_font": {"size": 12, "name": "Calibri"}
+    },
+    "y_axis": {
+        "max": 16,
+        "min": -4,
+        "major_unit": 2,
+        "num_font": {"size": 12, "name": "Calibri"},
+        "major_gridlines": {"visible": false}
+    },
+    "legend": {
+        "position": "bottom",
+        "font": {"size": 12, "name": "Calibri"}
+    }
+}
