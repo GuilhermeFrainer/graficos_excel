@@ -1,0 +1,18 @@
+{
+    "file_path": "../files/",
+    "series_start": "2018-12-01",
+    "x_axis": {
+        "num_font": {"name": "Calibri", "size": 12},
+        "date_axis": true,
+        "label_position": "low",
+        "major_unit": 1,
+        "major_unit_type": "months"
+    },
+    "y_axis": {
+        "num_font": {"name": "Calibri", "size": 12},
+        "min": 0,
+        "max": 4.4,
+        "major_unit": 0.2,
+        "major_gridlines": {"visible": false}
+    }
+}

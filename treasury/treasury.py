@@ -1,4 +1,3 @@
-import config
 from datetime import date
 from sys import exit
 import xlsxwriter
@@ -12,9 +11,10 @@ entries = 0
 
 
 def main():
-    json_data = get_json(API_KEY, config.SERIES_START).text
-    workbook = json_to_excel(json.loads(json_data))
-    make_chart(workbook)
+    config = sidra_helpers.get_config("config.json")
+    json_data = get_json(API_KEY, config['series_start']).text
+    workbook = json_to_excel(json.loads(json_data), config)
+    make_chart(workbook, config)
 
     credits = [
     'Tabela feita automaticamente em Python',
@@ -26,7 +26,7 @@ def main():
     workbook.close()
 
 
-def make_chart(workbook : xlsxwriter.Workbook) -> None:
+def make_chart(workbook : xlsxwriter.Workbook, config: dict) -> None:
     global entries
 
     chartsheet = workbook.add_chartsheet('Gráfico')
@@ -38,18 +38,18 @@ def make_chart(workbook : xlsxwriter.Workbook) -> None:
         'line': {'color': '#4472c4'}
     })
 
-    chart.set_x_axis(config.x_axis_config)
-    chart.set_y_axis(config.y_axis_config)
+    chart.set_x_axis(config['x_axis'])
+    chart.set_y_axis(config['y_axis'])
     chart.set_legend({'none': True})
 
     chartsheet.set_chart(chart)
 
 
 # Writes the json data into an Excel file. Returns workbook and worksheet
-def json_to_excel(json_data: dict) -> xlsxwriter.Workbook:
+def json_to_excel(json_data: dict, config: dict) -> xlsxwriter.Workbook:
     global entries
     
-    workbook = xlsxwriter.Workbook(f"{config.FILE_PATH}Treasury {date.today().isoformat()}.xlsx")
+    workbook = xlsxwriter.Workbook(f"{config['file_path']}Treasury {date.today().isoformat()}.xlsx")
     worksheet = workbook.add_worksheet("Dados")
 
     worksheet.write('A1', 'Data')
