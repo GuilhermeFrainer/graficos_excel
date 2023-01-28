@@ -1,0 +1,25 @@
+{
+    "series_start_date": "2012-01-01",
+    "chart_start_date": "2018-01-01",
+    "file_path": "../files/",
+    "x_axis": {
+        "num_font": {"name": "Calibri", "size": 12},
+        "date_axis": true,
+        "num_format": "mmm-yy",
+        "label_position": "low",
+        "major_unit": 2,
+        "major_unit_type": "months"
+    },
+    "y_axis": {
+        "num_font": {"name": "Calibri", "size": 12},
+        "min": 60,
+        "max": 100,
+        "major_unit": 5,
+        "major_gridlines": {"visible": false}
+    },
+    "legend": {
+        "position": "bottom",
+        "font": {"name": "Calibri", "size": 12},
+        "delete_series": [4]
+    }
+}
