@@ -5,18 +5,18 @@
         "num_font": {
             "name": "Calibri",
             "size": 12,
-            "rotation": -45,
-        },
+            "rotation": -45
+        }
     },
     "y_axis": {
         "num_font": {"name": "Calibri", "size": 12},
         "min": 80000,
         "max": 115000,
         "major_unit": 5000,
-        "major_gridlines": {"visible": false},
+        "major_gridlines": {"visible": false}
     },
     "legend": {
         "position": "bottom",
-        "font": {"name": "Calibri", "size": 12},
+        "font": {"name": "Calibri", "size": 12}
     }
 }
