@@ -1,3 +1,0 @@
-SERIES_START = '2011-01-01'
-
-FILE_PATH = "../files/"
