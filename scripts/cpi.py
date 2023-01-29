@@ -1,6 +1,6 @@
 import sidra_helpers
 import sys
-from api_keys import BLS_API
+from .api_keys import BLS_API
 import xlsxwriter
 import datetime
 import requests
@@ -11,7 +11,7 @@ total_entries = 0
 
 
 def main():
-    config = sidra_helpers.get_config("../config/cpi.json")
+    config = sidra_helpers.get_config("config/cpi.json")
     full_cpi, core_cpi = get_data(config)
     
     series_list = bls_to_list(full_cpi, core_cpi)

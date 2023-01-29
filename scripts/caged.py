@@ -1,6 +1,6 @@
 import xlsxwriter
 from urllib.request import urlretrieve
-from data import Data
+from .data import Data
 from math import isnan
 import requests
 import bs4
@@ -17,7 +17,7 @@ total_entries = None
 
 def main():
     get_data()
-    config = sh.get_config("../config/caged.json")
+    config = sh.get_config("config/caged.json")
     workbook, worksheet = caged_to_excel(config)
     write_formulas(workbook, worksheet)
     make_chart(workbook, config)

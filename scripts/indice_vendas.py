@@ -4,7 +4,7 @@ import xlsxwriter
 
 
 def main():
-    config = sidra_helpers.get_config("../config/indice_vendas.json")
+    config = sidra_helpers.get_config("config/indice_vendas.json")
     period = sidra_helpers.get_period(config['series_start_date'])
     sidra_data = get_data(period)
     sidra_data = sidra_helpers.api_to_list(sidra_data)

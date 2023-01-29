@@ -1,7 +1,7 @@
 {
     "series_start_date": "2012-01-01",
     "chart_start_date": "2018-01-01",
-    "file_path": "../files/",
+    "file_path": "files/",
     "x_axis": {
         "num_font": {"name": "Calibri", "size": 12},
         "date_axis": true,

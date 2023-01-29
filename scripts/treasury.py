@@ -4,14 +4,14 @@ import xlsxwriter
 import requests
 import json
 import sidra_helpers
-from api_keys import FRED_API
+from .api_keys import FRED_API
 
 
 entries = 0
 
 
 def main():
-    config = sidra_helpers.get_config("../config/treasury.json")
+    config = sidra_helpers.get_config("config/treasury.json")
     json_data = get_json(FRED_API, config['series_start']).text
     workbook = json_to_excel(json.loads(json_data), config)
     make_chart(workbook, config)

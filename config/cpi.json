@@ -1,6 +1,6 @@
 {
     "start_year": "1965",
-    "file_path": "../files/",
+    "file_path": "files/",
     "x_axis": {
         "data_axis": true,
         "major_unit": 2,

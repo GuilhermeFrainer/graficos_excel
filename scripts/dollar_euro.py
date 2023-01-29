@@ -1,4 +1,4 @@
-from api_keys import FRED_API
+from .api_keys import FRED_API
 import requests
 import sys
 import json
@@ -11,7 +11,7 @@ series_length = 0
 
 
 def main():
-    config = sidra_helpers.get_config("config.json")
+    config = sidra_helpers.get_config("config/dollar_euro.json")
     json_data = get_json(config)
     
     workbook, worksheet = make_excel(json_data, config)

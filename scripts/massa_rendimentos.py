@@ -9,7 +9,7 @@ series_size = 0
 def main():
     global series_size
 
-    config = sh.get_config("../config/massa_rendimentos.json")
+    config = sh.get_config("config/massa_rendimentos.json")
     period = sh.get_period(config['start_date'])
     earnings_data = get_data(period)
     earnings_data = sh.api_to_list(earnings_data)
