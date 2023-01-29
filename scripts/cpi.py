@@ -1,6 +1,6 @@
 import sidra_helpers
 import sys
-from api_key import API_KEY
+from api_keys import BLS_API
 import xlsxwriter
 import datetime
 import requests
@@ -11,7 +11,7 @@ total_entries = 0
 
 
 def main():
-    config = sidra_helpers.get_config("config.json")
+    config = sidra_helpers.get_config("../config/cpi.json")
     full_cpi, core_cpi = get_data(config)
     
     series_list = bls_to_list(full_cpi, core_cpi)
@@ -117,7 +117,7 @@ def save_data(json_data):
 # Gets json object from BLS API
 def get_json(start_year : int, end_year : int) -> dict:
     headers = {'Content-type': 'application/json'}
-    data = json.dumps({"seriesid": ['CUUR0000SA0','CUUR0000SA0L1E'],"startyear": str(start_year), "endyear": str(end_year), "calculations": True, 'registrationKey': API_KEY})
+    data = json.dumps({"seriesid": ['CUUR0000SA0','CUUR0000SA0L1E'],"startyear": str(start_year), "endyear": str(end_year), "calculations": True, 'registrationKey': BLS_API})
     p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
     
     if p.status_code != 200:

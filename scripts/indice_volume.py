@@ -8,7 +8,7 @@ import sys
 
 
 def main():
-    config = sidra_helpers.get_config("config.json")
+    config = sidra_helpers.get_config("../config/indice_volume.json")
     period = sidra_helpers.get_period(config['start_date'])
     api_data = get_data(period)
     api_data = sidra_helpers.api_to_list(api_data)

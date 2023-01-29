@@ -17,7 +17,7 @@ total_entries = None
 
 def main():
     get_data()
-    config = sh.get_config("config.json")
+    config = sh.get_config("../config/caged.json")
     workbook, worksheet = caged_to_excel(config)
     write_formulas(workbook, worksheet)
     make_chart(workbook, config)

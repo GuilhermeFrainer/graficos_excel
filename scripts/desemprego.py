@@ -9,7 +9,7 @@ series_size = 0
 def main():
     global series_size
 
-    config = sidra_helpers.get_config("desemprego_config.json")
+    config = sidra_helpers.get_config("../config/desemprego.json")
     period = sidra_helpers.get_period(config['start_date'])
     sidra_data = get_data(period)
     sidra_data = sidra_helpers.api_to_list(sidra_data)

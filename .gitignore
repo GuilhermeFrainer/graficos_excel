@@ -1,5 +1,5 @@
 files/
-*/api_key.py
 __pycache__
 *.xlsx
 *.xls
+scripts/api_keys.py

@@ -1,4 +1,4 @@
-from api_key import API_KEY
+from api_keys import FRED_API
 import requests
 import sys
 import json
@@ -30,7 +30,7 @@ def main():
 
 # Gets json data from the FRED API
 def get_json(config: dict) -> dict:
-    request = f"series_id=DEXUSEU&observation_start={config['series_start']}&observation_end={config['series_end']}&api_key={API_KEY}&file_type=json"
+    request = f"series_id=DEXUSEU&observation_start={config['series_start']}&observation_end={config['series_end']}&api_key={FRED_API}&file_type=json"
     request = f"https://api.stlouisfed.org/fred/series/observations?{request}"
 
     json_data = requests.get(request)

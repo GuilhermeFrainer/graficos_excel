@@ -13,7 +13,7 @@ expectations_size = 0
 def main():
     global ipca_size, series_size, expectations_size
 
-    config = sidra_helpers.get_config("ipca_config.json")
+    config = sidra_helpers.get_config("../config/ipca.json")
     period = sidra_helpers.get_period(config['series_start_date'])
     ipca_data = get_ipca_data(period)
     ipca_data = sidra_helpers.api_to_list(ipca_data)
