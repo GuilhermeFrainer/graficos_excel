@@ -1,15 +1,15 @@
 # External imports
 import sys
+import win32com.client
 
 # Local imports
 import scripts
 
 def main(argv: list[str]):
-    parse_argv(argv)
-
-
-def parse_argv(argv: list[str]):
     if len(argv) < 2:
+        #
+        # ADD USAGE MESSAGE
+        #
         sys.exit("Too few arguments")
 
     function_dict = {
@@ -25,7 +25,6 @@ def parse_argv(argv: list[str]):
         'pib': scripts.pib,
         'treasury': scripts.treasury,
     }
-    
     for argument in argv[1:]:
         try:
             function_dict[argument]()

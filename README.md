@@ -10,12 +10,13 @@ This repository was created to keep the Python scripts that generate Excel chart
 
 caged: CAGED e Novo CAGED do PDET  
 cpi: CUUR0000SA0 and CUUR0000SA0L1E from the BLS API  
+desemprego: tabela 6381 do SIDRA  
 dollar_euro: DEXUSEU from the FRED API  
-emprego: tabelas 6318 e 6381 do SIDRA  
 indice_vendas: tabelas 8185, 8186, 8159 e 8161 do SIDRA  
 indice_volume: tabelas 8185, 8186, 8159 e 8161 do SIDRA e tabela 24364 do Bacen  
 ipca: tabela 1737 do SIDRA e API do Bacen para expectativas  
 massa_rendimentos: tabela 6392 do SIDRA  
+pea: tabela 6318 do Sidra  
 treasury: DGS10 from the FRED API
 
 # Links
