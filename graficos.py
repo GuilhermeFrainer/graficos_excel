@@ -8,12 +8,9 @@ import scripts
 
 def main(argv: list[str]):
     if len(argv) < 2:
-        #
-        # ADD USAGE MESSAGE
-        #
         sys.exit("Too few arguments.")
 
-    if "config" or "-c" in argv:
+    if "config" in argv:
         access_config(argv[1:])
 
     function_dict = {
@@ -45,7 +42,7 @@ def access_config(argv: list[str]):
         sys.exit("You may only access the config of one file at a time.")
     
     for arg in argv:
-        if arg == "-c" or arg == "config":
+        if arg == "config":
             continue
         try:
             with open(f"config/{arg}.json", "r") as file:
@@ -54,7 +51,6 @@ def access_config(argv: list[str]):
             sys.exit(f"{arg} is not an available file.")
 
     print(json.dumps(config_dict, indent=4))
-    
     sys.exit()
 
 
