@@ -1,10 +1,10 @@
 # Propósito (PT-BR)
 
-Este repositório foi criado para guardar os programas que geram gráficos de Excel com séries históricas de dados econômicos.
+Este repositório foi criado para guardar alguns programas que geram gráficos de Excel com séries históricas de dados econômicos.
 
 # Purpose (EN)
 
-This repository was created to keep the Python scripts that generate Excel charts based on economic data.
+This repository was created to keep some Python scripts that generate Excel charts based on economic data.
 
 # Fontes / Sources
 
