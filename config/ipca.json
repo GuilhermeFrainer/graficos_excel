@@ -20,8 +20,8 @@
     },
     "y2_axis": {
         "num_font": {"name": "Calibri", "size": 12},
-        "min": -7.5,
-        "max": 15.0,
+        "min": -6.5,
+        "max": 13.0,
         "major_unit": 1.5,
         "crossing": 0
     },

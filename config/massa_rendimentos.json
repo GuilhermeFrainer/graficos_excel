@@ -1,6 +1,6 @@
 {
     "file_path": "files/",
-    "start_date": "2013-01-01",
+    "start_date": "2014-01-01",
     "x_axis": {
         "num_font": {"name": "Calibri", "size": 12},
         "date_axis": true,
@@ -12,7 +12,7 @@
     "y_axis": {
         "num_font": {"name": "Calibri", "size": 12},
         "min": 215000,
-        "max": 270000,
+        "max": 280000,
         "major_unit": 5000,
         "major_gridlines": {"visible": false},
         "num_format": "#.0,"

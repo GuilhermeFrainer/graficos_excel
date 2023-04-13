@@ -16,7 +16,7 @@ def main():
         "Arquivo criado por código em Python",
         "Link do código:",
         "https://github.com/GuilhermeFrainer/graficos_excel",
-        "Fontes dos dados: API do Sidra, tabelas 8185, 8186, 8159 e 8161"
+        "Fontes dos dados: API do Sidra, tabelas 8880, 8881, 8888 e 8161"
     ]    
     make_chart(workbook, config)
     sidra_helpers.make_credits(workbook, credits)
@@ -24,37 +24,41 @@ def main():
 
 
 def get_data(period: str) -> list[list]:
-    t8185 = sidrapy.get_table(
-        table_code="8185", 
+    t8880 = sidrapy.get_table(
+        # Varejo
+        table_code="8880", 
         territorial_level="1",
         ibge_territorial_code="1",
-        variable="11707",
+        variable="7170",
         header="n",
         format="list",
         period=period,
         classifications = {'11046': '56734'}
     )
-    t8186 = sidrapy.get_table(
-        table_code="8186", 
+    t8881 = sidrapy.get_table(
+        # Varejo Ampliado
+        table_code="8881", 
         territorial_level="1",
         ibge_territorial_code="1",
-        variable="11707",
+        variable="7170",
         header="n",
         format="list",
         period=period,
         classifications = {'11046': '56736'}
     )
-    t8159 = sidrapy.get_table(
-        table_code="8159", 
+    t8888 = sidrapy.get_table(
+        # Indústria
+        table_code="8888", 
         territorial_level="1",
         ibge_territorial_code="1",
-        variable="11600",
+        variable="12607",
         header="n",
         format="list",
         period=period,
         classifications = {'544': '129314'}
     )
     t8161 = sidrapy.get_table(
+        # Serviços
         table_code="8161", 
         territorial_level="1",
         ibge_territorial_code="1",
@@ -64,7 +68,7 @@ def get_data(period: str) -> list[list]:
         period=period,
         classifications = {'11046': '56726'}
     )
-    return [t8185, t8186, t8159, t8161]
+    return [t8880, t8881, t8888, t8161]
 
 
 def make_chart(workbook: xlsxwriter.Workbook, config: dict) -> None:

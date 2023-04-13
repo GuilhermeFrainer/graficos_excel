@@ -23,7 +23,7 @@ def main():
     credits = [
         'Arquivo feito em Python. Link do código:',
         'https://github.com/GuilhermeFrainer/graficos_excel',
-        'Fontes dos dados: tabelas 8185, 8186, 8159 e 8161 do SIDRA e tabela 24364 da API do Bacen',
+        'Fontes dos dados: tabelas 8880, 8881, 8888 e 8161 do SIDRA e tabela 24364 da API do Bacen',
     ]
     sidra_helpers.make_credits(workbook, credits)
     workbook.close()
@@ -31,8 +31,9 @@ def main():
 
 # Gets data from the Sidra API
 def get_data(period: str) -> list[list]:
-    t8185 = get_table(
-        table_code="8185", 
+    t8880 = get_table(
+        # Varejo
+        table_code="8880", 
         territorial_level="1",
         ibge_territorial_code="1",
         variable="11711",
@@ -41,8 +42,9 @@ def get_data(period: str) -> list[list]:
         period=period,
         classifications={"11046": "56734"},
     )
-    t8186 = get_table(
-        table_code="8186", 
+    t8881 = get_table(
+        # Varejo Ampliado
+        table_code="8881", 
         territorial_level="1",
         ibge_territorial_code="1",
         variable="11711",
@@ -51,8 +53,9 @@ def get_data(period: str) -> list[list]:
         period=period,
         classifications={"11046": "56736"},
     )
-    t8159 = get_table(
-        table_code="8159", 
+    t8888 = get_table(
+        # Indústria
+        table_code="8888", 
         territorial_level="1",
         ibge_territorial_code="1",
         variable="11604",
@@ -62,6 +65,7 @@ def get_data(period: str) -> list[list]:
         classifications={"544": "129314"},
     )
     t8161 = get_table(
+        # Serviços
         table_code="8161", 
         territorial_level="1",
         ibge_territorial_code="1",
@@ -71,7 +75,7 @@ def get_data(period: str) -> list[list]:
         period=period,
         classifications={"11046": "56726"},
     )
-    return [t8185, t8186, t8159, t8161]
+    return [t8880, t8881, t8888, t8161]
 
 
 def make_charts(workbook: xlsxwriter.Workbook, config: dict) -> None:
