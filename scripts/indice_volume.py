@@ -23,7 +23,7 @@ def main():
     credits = [
         'Arquivo feito em Python. Link do código:',
         'https://github.com/GuilhermeFrainer/graficos_excel',
-        'Fontes dos dados: tabelas 8880, 8881, 8888 e 8161 do SIDRA e tabela 24364 da API do Bacen',
+        'Fontes dos dados: tabelas 8880, 8881, 8888 e 5906 do SIDRA e tabela 24364 da API do Bacen',
     ]
     sidra_helpers.make_credits(workbook, credits)
     workbook.close()
@@ -66,7 +66,7 @@ def get_data(period: str) -> list[list]:
     )
     t8161 = get_table(
         # Serviços
-        table_code="8161", 
+        table_code="5906", 
         territorial_level="1",
         ibge_territorial_code="1",
         variable="11626",

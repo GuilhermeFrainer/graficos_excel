@@ -16,7 +16,7 @@ def main():
         "Arquivo criado por código em Python",
         "Link do código:",
         "https://github.com/GuilhermeFrainer/graficos_excel",
-        "Fontes dos dados: API do Sidra, tabelas 8880, 8881, 8888 e 8161"
+        "Fontes dos dados: API do Sidra, tabelas 8880, 8881, 8888 e 5906"
     ]    
     make_chart(workbook, config)
     sidra_helpers.make_credits(workbook, credits)
@@ -57,18 +57,18 @@ def get_data(period: str) -> list[list]:
         period=period,
         classifications = {'544': '129314'}
     )
-    t8161 = sidrapy.get_table(
+    t5906 = sidrapy.get_table(
         # Serviços
-        table_code="8161", 
+        table_code="5906", 
         territorial_level="1",
         ibge_territorial_code="1",
-        variable="11622",
+        variable="7168",
         header="n",
         format="list",
         period=period,
         classifications = {'11046': '56726'}
     )
-    return [t8880, t8881, t8888, t8161]
+    return [t8880, t8881, t8888, t5906]
 
 
 def make_chart(workbook: xlsxwriter.Workbook, config: dict) -> None:
