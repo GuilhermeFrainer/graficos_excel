@@ -19,7 +19,7 @@ def main():
 
     headers = ['Mês', 'Varejo', 'Varejo Ampliado', 'Indústria', 'Serviços', 'IBC-Br']
     workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}Índice volume", api_data, headers)
-    make_charts(workbook, config)
+    make_chart(workbook, config)
     credits = [
         'Arquivo feito em Python. Link do código:',
         'https://github.com/GuilhermeFrainer/graficos_excel',
@@ -78,7 +78,7 @@ def get_data(period: str) -> list[list]:
     return [t8880, t8881, t8888, t8161]
 
 
-def make_charts(workbook: xlsxwriter.Workbook, config: dict) -> None:
+def make_chart(workbook: xlsxwriter.Workbook, config: dict) -> None:
     series_size = sidra_helpers.get_series_size()
     chart = workbook.add_chart({'type': 'line'})
 

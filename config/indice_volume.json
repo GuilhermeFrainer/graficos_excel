@@ -1,6 +1,6 @@
 {
     "file_path": "files/",
-    "start_date": "2018-01-01",
+    "start_date": "2020-01-01",
     "x_axis": {
         "num_font": {"name": "Calibri", "size": 12},
         "date_axis": true,
