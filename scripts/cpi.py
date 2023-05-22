@@ -8,8 +8,6 @@ import json
 
 
 total_entries = 0
-date_format = None
-number_format = None
 
 
 def main(workbook: xlsxwriter.Workbook, credits: list[str]):
@@ -19,7 +17,7 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     series_list = bls_to_list(full_cpi, core_cpi)
     headers = ['Período', 'Índice cheio', 'Núcleo de inflação']
 
-    worksheet = make_sheet("CPI", series_list, workbook, headers)
+    worksheet = sidra_helpers.make_sheet("CPI", series_list, workbook, headers)
 
     make_chart(workbook, worksheet, config)
     credits += [
@@ -28,7 +26,7 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     ]
 
 
-def get_data(config: dict):
+def get_data(config: dict) -> tuple[list, list]:
     full_cpi = []
     core_cpi = []
     start_year = int(config['start_year'])
@@ -100,7 +98,7 @@ def get_date_list(cpi : list[dict]) -> list[datetime.date]:
 
 
 # For testing purposes. Avoids calling the BLS API multiple times
-def load_data():
+def load_data() -> dict:
     with open('json_data.json', 'r') as file:
         json_data = json.load(file)
 
@@ -128,38 +126,4 @@ def get_json(start_year : int, end_year : int) -> dict:
     core_cpi = json_data['Results']['series'][1]['data']
     
     return full_cpi, core_cpi 
-
-# Adds a sheet with the data to the workbook
-# Sets default date and number formats if they haven't been set
-def make_sheet(sheet_name: str, series_list: list[list], workbook: xlsxwriter.Workbook, headers: list[str], index_chart=False) -> xlsxwriter.Workbook.worksheet_class:
-    global date_format, number_format
-
-    skipped_lines = 0
-    if index_chart:
-        skipped_lines = 4
-
-    worksheet = workbook.add_worksheet(sheet_name)
-    
-    # Sets date and number formats if there are none
-    if date_format == None:
-        date_format = workbook.add_format({'num_format': 'mmm/yy'})
-    
-    if number_format == None:
-        number_format = workbook.add_format({'num_format': '##0.0'})
-
-    # Writes headers
-    for (i, header) in enumerate(headers):
-        worksheet.write(0 + skipped_lines, i, header)
-
-    # Writes data
-    for (j, series) in enumerate(series_list):
-        for (i, entry) in enumerate(series):
-            # Writes dates
-            if j == 0:
-                worksheet.write_datetime(skipped_lines + 1 + i, j, entry, date_format)
-            # Writes numeric data
-            else:
-                worksheet.write(skipped_lines + 1 + i, j, entry)
-
-    return worksheet
 
