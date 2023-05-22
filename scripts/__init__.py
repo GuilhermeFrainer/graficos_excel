@@ -1,4 +1,6 @@
+### UPDATED ###
 from .caged import main as caged
+### NON-UPDATED ###
 from .cpi import main as cpi
 from .desemprego import main as desemprego
 from .dollar_euro import main as dollar_euro

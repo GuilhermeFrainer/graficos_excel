@@ -1,6 +1,9 @@
 # External imports
 import sys
 import json
+from datetime import date
+import xlsxwriter
+import sidra_helpers
 
 
 # Local imports
@@ -13,6 +16,17 @@ def main(argv: list[str]):
 
     if "config" in argv:
         access_config(argv[1:])
+
+    filename = handle_filename(argv)
+    workbook = xlsxwriter.Workbook(f"files/{filename}")
+
+    credits = [
+        "Tabela feita automaticamente em Python. Código em:",
+        "https://github.com/GuilhermeFrainer/caged",
+        "",
+        "Fontes dos dados:",
+        "",
+    ]
 
     function_dict = {
         'caged': scripts.caged,
@@ -29,10 +43,14 @@ def main(argv: list[str]):
     }
     for argument in argv[1:]:
         try:
-            function_dict[argument]()
-            print(f"Successfully created {argument} Excel file.")
+            function_dict[argument](workbook, credits)
+            print(f"Successfully created {argument} Excel sheet.")
         except KeyError:
             print(f"{argument} isn't an available script.")
+
+
+    sidra_helpers.make_credits(workbook, credits)
+    workbook.close()
 
 
 # argv here skips the name of the python program being run (i.e. it's shorter than usual)
@@ -53,6 +71,20 @@ def access_config(argv: list[str]):
 
     print(json.dumps(config_dict, indent=4))
     sys.exit()
+
+
+# Determines the name of the file to be created
+def handle_filename(argv: list[str]) -> str:
+    if "-o" in argv:
+        filename_index = argv.index("-o") + 1
+        filename = argv[filename_index]
+        if "." in filename:
+            sys.exit("Invalid filename: please do not put an extension in the filename.")
+        
+        return f"{filename} {date.today().isoformat()}.xlsx"            
+
+    else:
+        return f"Gráficos {date.today().isoformat()}.xlsx"
 
 
 if __name__=="__main__":

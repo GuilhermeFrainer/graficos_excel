@@ -15,24 +15,22 @@ import sys
 total_entries = None
 
 
-def main():
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     get_data()
     config = sh.get_config("config/caged.json")
-    workbook, worksheet = caged_to_excel(config)
+    worksheet = caged_to_excel(workbook, config)
     write_formulas(workbook, worksheet)
-    make_chart(workbook, config)
-    
-    credits = [
-        'Tabela feita automaticamente em Python. Código em:',
-        'https://github.com/GuilhermeFrainer/caged',
-        'Fonte dos dados de antes de 2020:',
-        'http://pdet.mte.gov.br/caged?view=default%20-%20Tabelas%20-%20Tabela%202',
-        'Fonte dos dados de 2020 em diante:',
-        'http://pdet.mte.gov.br/novo-caged?view=default'
-    ]
-    sh.make_credits(workbook, credits)
+    make_chart(workbook, worksheet, config)
     os.remove("Tabela caged.xlsx")
-    workbook.close()
+
+    caged_credits = [
+        'Fonte dos dados do CAGED de antes de 2020:',
+        'http://pdet.mte.gov.br/caged?view=default%20-%20Tabelas%20-%20Tabela%202',
+        'Fonte dos dados do CAGED de 2020 em diante:',
+        'http://pdet.mte.gov.br/novo-caged?view=default',
+    ]
+
+    credits += caged_credits
 
 
 # Writes formulas whose values will later be used to make the chart
@@ -48,30 +46,31 @@ def write_formulas(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook
         worksheet.write_formula(f'C{i}', f'=SUM(B{i - 11}:B{i})')
 
 
-def make_chart(workbook: xlsxwriter.Workbook, config: dict):
+def make_chart(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class, config: dict):
     global total_entries
-
-    chartsheet = workbook.add_chartsheet('Gráfico')
 
     # Makes column chart with simple balance values
     column_chart = workbook.add_chart({'type': 'column'})
     column_chart.add_series({
-        'categories': f'=Dados!$A$14:$A${total_entries + 1}',
-        'values': f'=Dados!$B$14:$B${total_entries + 1}',
-        'name': f'=Dados!$B$1'
+        'categories': f"='{worksheet.get_name()}'!$A$14:$A${total_entries + 1}",
+        'values': f"='{worksheet.get_name()}'!$B$14:$B${total_entries + 1}",
+        'name': f"='{worksheet.get_name()}'!$B$1"
     })
     
     # Makes line chart with accumulated values
     line_chart = workbook.add_chart({'type': 'line'})
     line_chart.add_series({
-        'categories': f'=Dados!$A$14:$A${total_entries + 1}',
-        'values': f'=Dados!$C$14:$C${total_entries + 1}',
-        'name': f'=Dados!$C$1',
+        'categories': f"='{worksheet.get_name()}'!$A$14:$A${total_entries + 1}",
+        'values': f"='{worksheet.get_name()}'!$C$14:$C${total_entries + 1}",
+        'name': f"='{worksheet.get_name()}'!$C$1",
         'y2_axis': True,
         'data_labels': {
-            'font': {'color': '#be4b48'},
-            'num_format': '#,##0.0',
-            }
+            'font': {
+                'color': '#be4b48',
+                'size': 12
+            },
+            'num_format': '#,##.0',
+        }
     })
 
     line_chart.set_y2_axis(config['y2_axis'])
@@ -82,11 +81,11 @@ def make_chart(workbook: xlsxwriter.Workbook, config: dict):
     column_chart.set_y_axis(config['y_axis'])
     column_chart.set_legend(config['legend'])
 
-    chartsheet.set_chart(column_chart)
+    worksheet.insert_chart('F2', column_chart, {'x_scale': 2, 'y_scale': 2})
 
 
 # Extracts the necessary data from the caged sheet. Returns workbook and worksheet.    
-def caged_to_excel(config: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
+def caged_to_excel(workbook: xlsxwriter.Workbook, config: dict) -> xlsxwriter.Workbook.worksheet_class:
     global total_entries
     
     # Gets old data as list
@@ -117,8 +116,7 @@ def caged_to_excel(config: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbo
     total_entries = len(entries)
 
     # Writes into Excel file
-    workbook = xlsxwriter.Workbook(f"{config['file_path']}CAGED {datetime.date.today().isoformat()}.xlsx")
-    worksheet = workbook.add_worksheet('Dados')
+    worksheet = workbook.add_worksheet('Dados CAGED')
 
     # Writes headers
     worksheet.write('A1', 'Mês')
@@ -131,7 +129,7 @@ def caged_to_excel(config: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbo
         worksheet.write_datetime(i + 1, 0, entries[i].date, date_format)
         worksheet.write(i + 1, 1, entries[i].value)
 
-    return workbook, worksheet
+    return worksheet
   
 
 # Gets the Excel files from the CAGED website
@@ -154,8 +152,4 @@ def get_data():
     new_link = f'http://pdet.mte.gov.br{new_link}'
     urlretrieve(new_link, 'Tabela caged.xlsx')
     print("Successfully downloaded file")
-
-
-if __name__ == '__main__':
-    main()
 
