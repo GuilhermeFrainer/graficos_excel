@@ -116,7 +116,7 @@ def caged_to_excel(workbook: xlsxwriter.Workbook, config: dict) -> xlsxwriter.Wo
     total_entries = len(entries)
 
     # Writes into Excel file
-    worksheet = workbook.add_worksheet('Dados CAGED')
+    worksheet = workbook.add_worksheet('CAGED')
 
     # Writes headers
     worksheet.write('A1', 'Mês')

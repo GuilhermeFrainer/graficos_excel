@@ -8,25 +8,24 @@ import json
 
 
 total_entries = 0
+date_format = None
+number_format = None
 
 
-def main():
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     config = sidra_helpers.get_config("config/cpi.json")
     full_cpi, core_cpi = get_data(config)
     
     series_list = bls_to_list(full_cpi, core_cpi)
     headers = ['Período', 'Índice cheio', 'Núcleo de inflação']
 
-    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}CPI", series_list, headers)
-    make_chart(workbook, config)
-    credits = [
-    'Arquivo criado em Python usando a API do Bureau of Labor Statistics.',
-    'Link do código: https://github.com/GuilhermeFrainer/cpi',
+    worksheet = make_sheet("CPI", series_list, workbook, headers)
+
+    make_chart(workbook, worksheet, config)
+    credits += [
+    'Fontes dos dados CPI: API do Bureau of Labor Statistics',
     'BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.'
     ]
-    sidra_helpers.make_credits(workbook, credits)
-
-    workbook.close()
 
 
 def get_data(config: dict):
@@ -46,20 +45,20 @@ def get_data(config: dict):
     return full_cpi, core_cpi
 
 
-def make_chart(workbook : xlsxwriter.Workbook, config: dict):
-    chartsheet = workbook.add_chartsheet('Gráfico')
+def make_chart(workbook : xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class, config: dict):
+    global total_entries
     chart = workbook.add_chart({'type': 'line'})
 
     chart.add_series({
-        'categories': f'=Dados!$A$2:$A${1 + total_entries}',
-        'values': f'=Dados!$B$2:$B${1 + total_entries}',
+        'categories': f"='{worksheet.get_name()}'!$A$2:$A${1 + total_entries}",
+        'values': f"='{worksheet.get_name()}'!$B$2:$B${1 + total_entries}",
         'line': {'color': '#4472c4'},
         'name': 'Índice cheio'
     })    
 
     chart.add_series({
-        'categories': f'=Dados!$A$2:$A${1 + total_entries}',
-        'values': f'=Dados!$C$2:$C${1 + total_entries}',
+        'categories': f"='{worksheet.get_name()}'!$A$2:$A${1 + total_entries}",
+        'values': f"='{worksheet.get_name()}'!$C$2:$C${1 + total_entries}",
         'line': {'color': '#c00000'},
         'name': 'Núcleo de inflação'
     })
@@ -68,7 +67,7 @@ def make_chart(workbook : xlsxwriter.Workbook, config: dict):
     chart.set_y_axis(config['y_axis'])
     chart.set_legend(config['legend'])
 
-    chartsheet.set_chart(chart)
+    worksheet.insert_chart("D2", chart, {'x_scale': 2, 'y_scale': 2})
 
 
 # Converts data from BLS into list with dates and values
@@ -130,8 +129,37 @@ def get_json(start_year : int, end_year : int) -> dict:
     
     return full_cpi, core_cpi 
 
+# Adds a sheet with the data to the workbook
+# Sets default date and number formats if they haven't been set
+def make_sheet(sheet_name: str, series_list: list[list], workbook: xlsxwriter.Workbook, headers: list[str], index_chart=False) -> xlsxwriter.Workbook.worksheet_class:
+    global date_format, number_format
 
-if __name__ == '__main__':
-    main()
+    skipped_lines = 0
+    if index_chart:
+        skipped_lines = 4
 
+    worksheet = workbook.add_worksheet(sheet_name)
     
+    # Sets date and number formats if there are none
+    if date_format == None:
+        date_format = workbook.add_format({'num_format': 'mmm/yy'})
+    
+    if number_format == None:
+        number_format = workbook.add_format({'num_format': '##0.0'})
+
+    # Writes headers
+    for (i, header) in enumerate(headers):
+        worksheet.write(0 + skipped_lines, i, header)
+
+    # Writes data
+    for (j, series) in enumerate(series_list):
+        for (i, entry) in enumerate(series):
+            # Writes dates
+            if j == 0:
+                worksheet.write_datetime(skipped_lines + 1 + i, j, entry, date_format)
+            # Writes numeric data
+            else:
+                worksheet.write(skipped_lines + 1 + i, j, entry)
+
+    return worksheet
+
