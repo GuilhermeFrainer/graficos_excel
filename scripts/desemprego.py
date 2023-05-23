@@ -6,7 +6,7 @@ import xlsxwriter
 series_size = 0
 
 
-def main():
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     global series_size
 
     config = sidra_helpers.get_config("config/desemprego.json")
@@ -14,19 +14,15 @@ def main():
     sidra_data = get_data(period)
     sidra_data = sidra_helpers.api_to_list(sidra_data)
     headers = ['Mês', 'Dados']
-    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}Desocupação", sidra_data, headers)
+    worksheet = sidra_helpers.make_sheet("Desemprego", sidra_data, workbook, headers)
     
     series_size = sidra_helpers.get_series_size()
 
-    make_chart(workbook, config)
+    make_chart(workbook, worksheet, config)
 
-    credits = [
-        'Arquivo feito em Python',
-        'Dados obtidos da API do SIDRA'
+    credits += [
+        "Dados de desemprego obtidos da tabela 6381 da API do SIDRA"
     ]
-
-    sidra_helpers.make_credits(workbook, credits)
-    workbook.close()
 
 
 def get_data(period : str) -> list[list]:
@@ -43,24 +39,19 @@ def get_data(period : str) -> list[list]:
     return [sidra_data]
 
 
-def make_chart(workbook : xlsxwriter.Workbook, config: dict):
+def make_chart(workbook : xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class, config: dict):
     global series_size
 
-    chartsheet = workbook.add_chartsheet('Gráfico')
     chart = workbook.add_chart({'type': 'line'})
 
     chart.add_series({
-        'categories': f'=Dados!$A$2:$A${series_size + 2}',
-        'values': f'=Dados!$B$2:$B${series_size + 2}'
+        'categories': f"='{worksheet.get_name()}'!$A$2:$A${series_size + 2}",
+        'values': f"='{worksheet.get_name()}'!$B$2:$B${series_size + 2}"
     })
 
     chart.set_x_axis(config['x_axis'])
     chart.set_y_axis(config['y_axis'])
     chart.set_legend({'none': True})
 
-    chartsheet.set_chart(chart)
-
-
-if __name__ == '__main__':
-    main()
+    worksheet.insert_chart("C2", chart, {'x_scale': 2, 'y_scale': 2})
 

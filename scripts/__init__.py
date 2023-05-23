@@ -1,8 +1,8 @@
 ### UPDATED ###
 from .caged import main as caged
 from .cpi import main as cpi
-### NON-UPDATED ###
 from .desemprego import main as desemprego
+### NON-UPDATED ###
 from .dollar_euro import main as dollar_euro
 from .indice_vendas import main as indice_vendas
 from .indice_volume import main as indice_volume

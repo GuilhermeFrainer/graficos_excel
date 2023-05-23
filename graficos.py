@@ -22,7 +22,7 @@ def main(argv: list[str]):
 
     credits = [
         "Tabela feita automaticamente em Python. Código em:",
-        "https://github.com/GuilhermeFrainer/caged",
+        "https://github.com/GuilhermeFrainer/graficos_excel",
         "",
         "Fontes dos dados:",
         "",
