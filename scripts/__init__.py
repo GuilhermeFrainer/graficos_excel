@@ -7,7 +7,7 @@ from .indice_vendas import main as indice_vendas
 from .var_vendas import main as var_vendas
 from .ipca import main as ipca
 from .massa_rendimentos import main as massa_rendimentos
-### NON-UPDATED ###
 from .pea import main as pea
 from .pib import main as pib
+### NON-UPDATED ###
 from .treasury import main as treasury

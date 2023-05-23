@@ -6,7 +6,7 @@ import xlsxwriter
 series_size = 0
 
 
-def main():
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     global series_size
 
     config = sidra_helpers.get_config("config/pea.json")
@@ -14,41 +14,36 @@ def main():
     sidra_data = get_data(period)
     sidra_data = sidra_helpers.api_to_list(sidra_data)
     headers = ['Mês', 'Pop. Ocupada', 'PEA']
-    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}PEA e ocupados", sidra_data, headers)
 
     series_size = sidra_helpers.get_series_size()
 
-    make_chart(workbook, config)
-    credits = [
-        'Arquivo feito em Python',
-        'Dados obtidos da API do SIDRA'
+    worksheet = sidra_helpers.make_sheet("PEA", sidra_data, workbook, headers) 
+    make_chart(workbook, worksheet, config)
+    credits += [
+        "PEA: tabela 6318 da API do SIDRA"
     ]
-    sidra_helpers.make_credits(workbook, credits)
-
-    workbook.close()
 
 
-def make_chart(workbook : xlsxwriter.Workbook, config: dict):
-    chartsheet = workbook.add_chartsheet('Gráfico')
+def make_chart(workbook : xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class, config: dict):
     chart = workbook.add_chart({'type': 'line'})
 
     chart.add_series({
-        'categories' : f'=Dados!$A$2:$A${series_size + 2}',
-        'values': f'=Dados!$B$2:$B${series_size + 2}',
-        'name': 'Pop. Ocupada',
-        'data_labels': {
-            'num_format': '#.0,',
-            'font': {'color': '#4F81BD'},
+        "categories" : f"='{worksheet.get_name()}'!$A$2:$A${series_size + 2}",
+        "values": f"='{worksheet.get_name()}'!$B$2:$B${series_size + 2}",
+        "name": f"='{worksheet.get_name()}'!$B$1",
+        "data_labels": {
+            "num_format": "#.0,",
+            "font": {"color": "#4F81BD"},
         }
     })
 
     chart.add_series({
-        'categories' : f'=Dados!$A$2:$A${series_size + 2}',
-        'values': f'=Dados!$C$2:$C${series_size + 2}',
-        'name': 'PEA',
-        'data_labels': {
-            'num_format': '#.0,',
-            'font': {'color': '#C00000'},
+        "categories" : f"='{worksheet.get_name()}'!$A$2:$A${series_size + 2}",
+        "values": f"='{worksheet.get_name()}'!$C$2:$C${series_size + 2}",
+        "name": f"='{worksheet.get_name()}'!$C$1",
+        "data_labels": {
+            "num_format": "#.0,",
+            "font": {"color": "#C00000"},
         }
     })
 
@@ -56,10 +51,10 @@ def make_chart(workbook : xlsxwriter.Workbook, config: dict):
     chart.set_y_axis(config['y_axis'])
     chart.set_legend(config['legend'])
 
-    chartsheet.set_chart(chart)
+    worksheet.insert_chart("D2", chart, {'x_scale': 2, 'y_scale': 2})
 
 
-def get_data(period : str) -> list:
+def get_data(period : str) -> list[list]:
     occupied_data = get_table(
         table_code="6318", 
         territorial_level="1",
@@ -83,8 +78,4 @@ def get_data(period : str) -> list:
     )
 
     return [occupied_data, total_data]
-
-
-if __name__ == '__main__':
-    main()
 
