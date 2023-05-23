@@ -21,7 +21,7 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     sidra_helpers.write_index_formulas(workbook, worksheet, headers)
 
     credits += [
-        "Fontes dos dados do índice de vendas: API do Sidra, tabelas 8880, 8881, 8888 e 5906 e tabela 24364 da API do Bacen"
+        "Índice de vendas: API do Sidra, tabelas 8880, 8881, 8888 e 5906 e tabela 24364 da API do Bacen"
     ]    
     make_chart(workbook, worksheet, config)
 

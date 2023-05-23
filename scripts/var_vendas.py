@@ -7,7 +7,7 @@ import json
 import sys
 
 
-def main():
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     config = sidra_helpers.get_config("config/indice_volume.json")
     period = sidra_helpers.get_period(config['start_date'])
     api_data = get_data(period)
@@ -18,15 +18,12 @@ def main():
     api_data.append(data_list)
 
     headers = ['Mês', 'Varejo', 'Varejo Ampliado', 'Indústria', 'Serviços', 'IBC-Br']
-    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}Índice volume", api_data, headers)
-    make_chart(workbook, config)
-    credits = [
-        'Arquivo feito em Python. Link do código:',
-        'https://github.com/GuilhermeFrainer/graficos_excel',
-        'Fontes dos dados: tabelas 8880, 8881, 8888 e 5906 do SIDRA e tabela 24364 da API do Bacen',
+
+    worksheet = sidra_helpers.make_sheet("Variação vendas", api_data, workbook, headers)
+    make_chart(workbook, worksheet, config)
+    credits += [
+        'Variação vendas: tabelas 8880, 8881, 8888 e 5906 do SIDRA e tabela 24364 da API do Bacen',
     ]
-    sidra_helpers.make_credits(workbook, credits)
-    workbook.close()
 
 
 # Gets data from the Sidra API
@@ -78,73 +75,73 @@ def get_data(period: str) -> list[list]:
     return [t8880, t8881, t8888, t8161]
 
 
-def make_chart(workbook: xlsxwriter.Workbook, config: dict) -> None:
+def make_chart(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class, config: dict):
     series_size = sidra_helpers.get_series_size()
     chart = workbook.add_chart({'type': 'line'})
 
     chart.add_series({
         # Varejo
-        'name': '=Dados!$B$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 1}',
-        'values': f'=Dados!$B$2:$B${series_size + 1}',
-        'line': {'color': '#c30c0e'},
-        'data_labels': {
-            'font': {
-                'color': '#c30c0e',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$B$1",
+        "categories": f"='{worksheet.get_name()}'!$A$2:$A${series_size + 1}",
+        "values": f"='{worksheet.get_name()}'!$B$2:$B${series_size + 1}",
+        "line": {"color": "#c30c0e"},
+        "data_labels": {
+            "font": {
+                "color": "#c30c0e",
+                "size": 12,
             },
         },
     })
     chart.add_series({
         # Varejo ampliado
-        'name': '=Dados!$C$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 1}',
-        'values': f'=Dados!$C$2:$C${series_size + 1}',
-        'line': {'color': '#0474c4'},
-        'data_labels': {
-            'font': {
-                'color': '#0474c4',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$C$1",
+        "categories": f"='{worksheet.get_name()}'!$A$2:$A${series_size + 1}",
+        "values": f"='{worksheet.get_name()}'!$C$2:$C${series_size + 1}",
+        "line": {"color": "#0474c4"},
+        "data_labels": {
+            "font": {
+                "color": "#0474c4",
+                "size": 12,
             },
         },
     })
     chart.add_series({
         # Indústria
-        'name': '=Dados!$D$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 1}',
-        'values': f'=Dados!$D$2:$D${series_size + 1}',
-        'line': {'color': '#0db260'},
-        'data_labels': {
-            'font': {
-                'color': '#0db260',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$D$1",
+        "categories": f"='{worksheet.get_name()}'!$A$2:$A${series_size + 1}",
+        "values": f"='{worksheet.get_name()}'!$D$2:$D${series_size + 1}",
+        "line": {"color": "#0db260"},
+        "data_labels": {
+            "font": {
+                "color": "#0db260",
+                "size": 12,
             },
         },
     })
     chart.add_series({
         # Serviços
-        'name': '=Dados!$E$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 1}',
-        'values': f'=Dados!$E$2:$E${series_size + 1}',
-        'line': {'color': '#fbc309'},
-        'data_labels': {
-            'font': {
-                'color': '#fbc309',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$E$1",
+        "categories": f"='{worksheet.get_name()}'!$A$2:$A${series_size + 1}",
+        "values": f"='{worksheet.get_name()}'!$E$2:$E${series_size + 1}",
+        "line": {"color": "#fbc309"},
+        "data_labels": {
+            "font": {
+                "color": "#fbc309",
+                "size": 12,
             },
         },
     })
     chart.add_series({
         # IBC-Br
-        'name': '=Dados!$F$1',
-        'categories': f'=Dados!$A$2:$A${series_size + 1}',
-        'values': f'=Dados!$F$2:$F${series_size + 1}',
-        'line': {'color': '#7030a0'},
-        'data_labels': {
-            'num_format': '0.0',
-            'font': {
-                'color': '#7030a0',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$F$1",
+        "categories": f"='{worksheet.get_name()}'!$A$2:$A${series_size + 1}",
+        "values": f"='{worksheet.get_name()}'!$F$2:$F${series_size + 1}",
+        "line": {"color": "#7030a0"},
+        "data_labels": {
+            "num_format": "0.0",
+            "font": {
+                "color": "#7030a0",
+                "size": 12,
             },
         },
     })
@@ -153,9 +150,8 @@ def make_chart(workbook: xlsxwriter.Workbook, config: dict) -> None:
     chart.set_y_axis(config['y_axis'])
     chart.set_legend(config['legend'])
 
-    chartsheet = workbook.add_chartsheet('Gráfico')
-    chartsheet.set_chart(chart)
-    
+    worksheet.insert_chart("G2", chart, {'x_scale': 2, 'y_scale': 2})
+
 
 # Get two years before the start date
 # Needs to be done to calculate accumulated 12 month change for IBC-Br
@@ -187,8 +183,4 @@ def get_ibc_br(config: dict) -> list[float]:
 # Gets the index from the json data and calculates accumulated 12-month change
 def calculate_acc(data_list: list[float]) -> list[float]:
     return [((sum(data_list[i - 11:i + 1])/sum(data_list[i - 23:i - 11])) - 1) * 100 for i in range(24, len(data_list))]
-
-
-if __name__ == '__main__':
-    main()
 

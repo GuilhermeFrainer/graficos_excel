@@ -5,7 +5,7 @@ from .desemprego import main as desemprego
 from .dollar_euro import main as dollar_euro
 from .indice_vendas import main as indice_vendas
 ### NON-UPDATED ###
-from .indice_volume import main as indice_volume
+from .var_vendas import main as var_vendas
 from .ipca import main as ipca
 from .massa_rendimentos import main as massa_rendimentos
 from .pea import main as pea

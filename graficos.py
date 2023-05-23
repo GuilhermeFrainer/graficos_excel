@@ -34,12 +34,12 @@ def main(argv: list[str]):
         'desemprego': scripts.desemprego,
         'dollar_euro': scripts.dollar_euro,
         'indice_vendas': scripts.indice_vendas,
-        'indice_volume': scripts.indice_volume,
         'ipca': scripts.ipca,
         'massa_rendimentos': scripts.massa_rendimentos,
         'pea': scripts.pea,
         'pib': scripts.pib,
         'treasury': scripts.treasury,
+        'var_vendas': scripts.var_vendas,
     }
     for argument in argv[1:]:
         try:
