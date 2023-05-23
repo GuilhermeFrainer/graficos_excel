@@ -10,22 +10,16 @@ import xlsxwriter
 series_length = 0
 
 
-def main():
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     config = sidra_helpers.get_config("config/dollar_euro.json")
     json_data = get_json(config)
     
-    workbook, worksheet = make_excel(json_data, config)
-    make_chart(workbook, config)
+    worksheet = make_sheet(workbook, json_data, config)
+    make_chart(workbook, worksheet, config)
 
-    credits = [
-        'Arquivo feito em Python',
-        'Link do código: https://github.com/GuilhermeFrainer/graficos_excel',
-        'Fonte dos dados:',
-        'API do FED de São Luís: https://fred.stlouisfed.org/docs/api/fred/'
+    credits += [
+        'Dados do câmbio dólar/euro da API do FED de São Luís: https://fred.stlouisfed.org/docs/api/fred/'
     ]
-    sidra_helpers.make_credits(workbook, credits)
-
-    workbook.close()
 
 
 # Gets json data from the FRED API
@@ -40,16 +34,12 @@ def get_json(config: dict) -> dict:
     return json.loads(json_data.text)
 
 
-def make_excel(json_data: dict, config: dict) -> tuple[xlsxwriter.Workbook, xlsxwriter.Workbook.worksheet_class]:
-    # Saves global variable for later
+# Uses a special function because there might be missing data points
+def make_sheet(workbook: xlsxwriter.Workbook, json_data: dict, config: dict) -> xlsxwriter.Workbook.worksheet_class:
     global series_length
     series_length = len(json_data['observations'])
     
-    today = date.today().isoformat()
-    filename = f"{config['file_path']}Câmbio dólar-euro {today}.xlsx"
-    
-    workbook = xlsxwriter.Workbook(filename)
-    worksheet = workbook.add_worksheet("Dados")
+    worksheet = workbook.add_worksheet("Dólar-Euro") # Reminder: '/' is an invalid character for sheet names
 
     # Adds formats
     date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
@@ -72,16 +62,16 @@ def make_excel(json_data: dict, config: dict) -> tuple[xlsxwriter.Workbook, xlsx
     # Resizes first column so that dates are visible
     worksheet.set_column_pixels(0, 0, 75)
 
-    return workbook, worksheet
+    return worksheet
 
 
-def make_chart(workbook: xlsxwriter.Workbook, config: dict):
+def make_chart(workbook: xlsxwriter.Workbook, worksheet:xlsxwriter.Workbook.worksheet_class, config: dict):
     global series_length
     
     chart = workbook.add_chart({'type': 'line'})
     chart.add_series({
-        'categories': f'=Dados!$A$2:$A${series_length + 2}',
-        'values': f'=Dados!$B$2:$B${series_length + 2}'
+        'categories': f"='{worksheet.get_name()}'!$A$2:$A${series_length + 2}",
+        'values': f"='{worksheet.get_name()}'!$B$2:$B${series_length + 2}"
     })
 
     config['x_axis']['min'] = date.fromisoformat(config['series_start'])
@@ -89,11 +79,5 @@ def make_chart(workbook: xlsxwriter.Workbook, config: dict):
     chart.set_y_axis(config['y_axis'])
     chart.set_legend(config['legend'])
 
-    chartsheet = workbook.add_chartsheet('Gráfico')
-    chartsheet.set_chart(chart)
+    worksheet.insert_chart("C2", chart, {'x_scale': 2, 'y_scale': 2})
 
-
-if __name__=='__main__':
-    main()
-
-    
