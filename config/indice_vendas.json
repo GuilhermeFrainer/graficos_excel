@@ -20,6 +20,6 @@
     "legend": {
         "position": "bottom",
         "font": {"name": "Calibri", "size": 12},
-        "delete_series": [4]
+        "delete_series": [5]
     }
 }
