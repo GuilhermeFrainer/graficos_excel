@@ -2,15 +2,17 @@ from sidrapy import get_table
 import sys
 import sidra_helpers
 import requests
-from xlsxwriter import Workbook
 import json
 import datetime
+import xlsxwriter
+
 
 series_size = 0
 ipca_size = 0
 expectations_size = 0
 
-def main():
+
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     global ipca_size, series_size, expectations_size
 
     config = sidra_helpers.get_config("config/ipca.json")
@@ -26,24 +28,17 @@ def main():
     ipca_data = join_lists(ipca_data, expectations)
 
     headers = ["Mês", "Índice", "T/T-1", "Acumulado 12 meses", "Expectativas"]
-    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}IPCA", ipca_data, headers)
-    workbook, worksheet = calculate_yoy(workbook, worksheet)
+    worksheet = sidra_helpers.make_sheet("IPCA", ipca_data, workbook, headers)
+    calculate_yoy(worksheet)
 
-    make_chart(workbook, config)
-    credits = [
-        'Arquivo feito em Python. Link do código:',
-        'https://github.com/GuilhermeFrainer/IPCA',
-        'Fontes dos dados:',
-        'API do SIDRA',
-        'API do Banco Central do Brasil'
+    make_chart(workbook, worksheet, config)
+    credits += [
+        "IPCA: tabela 1737 da API do SIDRA e API do BACEN"
     ]
-    sidra_helpers.make_credits(workbook, credits)
-    
-    workbook.close()
 
 
 # Calculates the monthly 12-month inflation rate
-def calculate_yoy(workbook: Workbook, worksheet: Workbook.worksheet_class) -> tuple[Workbook, Workbook.worksheet_class]:
+def calculate_yoy(worksheet: xlsxwriter.Workbook.worksheet_class):
     global ipca_size, series_size
 
     # Calculates the changes to inflation based on expectations
@@ -53,8 +48,6 @@ def calculate_yoy(workbook: Workbook, worksheet: Workbook.worksheet_class) -> tu
 
         # Writes changes to inflation
         worksheet.write_formula(f'$D{i}', f'=($B{i}/$B{i - 12}-1)*100', sidra_helpers.number_format)
-    
-    return (workbook, worksheet)
 
 
 # Puts expectations into the same lists as the actual values
@@ -149,55 +142,52 @@ def get_ipca_data(period : str) -> list[list]:
 def find_chart_start(config: dict) -> int:
     series_start = config['series_start_date'].split("-")
     chart_start = config['chart_start_date'].split("-")
-    difference = (int(chart_start[0]) - int(series_start[0])) * 12 + (int(chart_start[1]) - int(series_start[1]))
-    return difference
+    return (int(chart_start[0]) - int(series_start[0])) * 12 + (int(chart_start[1]) - int(series_start[1]))
 
 
-def make_chart(workbook: Workbook, config: dict) -> None:
+def make_chart(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class, config: dict):
     global ipca_size, expectations_size, series_size
 
     chart_start = find_chart_start(config)
 
-    chartsheet = workbook.add_chartsheet('Gráfico')
-
-    # Makes column chart with monthly inflation data
     column_chart = workbook.add_chart({'type': 'column'})
     column_chart.add_series({
-        'categories': f'=Dados!$A${chart_start + 2}:$A${series_size + 1}',
-        'values': f'=Dados!$C${chart_start + 2}:$C${ipca_size + 1}',
-        'name': 'T/T-1',
-        'line': {'color': '#4F81BD'},
-        'data_labels': {
-            'num_format': '0.0',
-            'value': True
+        # T/T-1
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start + 2}:$A${series_size + 1}",
+        "values": f"='{worksheet.get_name()}'!$C${chart_start + 2}:$C${ipca_size + 1}",
+        "name": f"='{worksheet.get_name()}'!$C$1",
+        "line": {"color": "#4F81BD"},
+        "data_labels": {
+            "num_format": "0.0",
+            "value": True
         }
     })
 
-    # Adds series with expectations data
     column_chart.add_series({
-        'categories': f'=Dados!$A${chart_start + 2}:$A${series_size + 1}',
-        'values': f'=Dados!$E${chart_start + 2}:$E${series_size + 1}',
-        'name': 'Expectativas',
-        'fill': {'color': '#9BBB59'},
-        'data_labels': {
-            'num_format': '0.0',
-            'value': True
+        # Expectativas
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start + 2}:$A${series_size + 1}",
+        "values": f"='{worksheet.get_name()}'!$E${chart_start + 2}:$E${series_size + 1}",
+        "name": f"='{worksheet.get_name()}'!$E$1",
+        "fill": {"color": "#9BBB59"},
+        "data_labels": {
+            "num_format": "0.0",
+            "value": True
         }
     })
 
-    # Makes line chart with yoy values
-    line_chart = workbook.add_chart({'type': 'line'})
+    line_chart = workbook.add_chart({"type": "line"})
     line_chart.add_series({
-        'categories': f'=Dados!$A${chart_start + 2}:$A${series_size + 1}',
-        'values': f'=Dados!$D${chart_start + 2}:$D${series_size + 1}',
-        'name': 'Acumulado 12 meses',
-        'line': {'color': '#C0504D'},
-        'y2_axis': True,
-        'data_labels': {
-            'num_format': '0.0',
-            'font': {
-                'color': '#C0504D',
-                'size': 12     
+        # Acumulado 12 meses
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start + 2}:$A${series_size + 1}",
+        "values": f"='{worksheet.get_name()}'!$D${chart_start + 2}:$D${series_size + 1}",
+        "name": f"='{worksheet.get_name()}'!$D$1",
+        "line": {"color": "#C0504D"},
+        "y2_axis": True,
+        "data_labels": {
+            "num_format": "0.0",
+            "font": {
+                "color": "#C0504D",
+                "size": 12     
             }
         }
     })
@@ -210,10 +200,6 @@ def make_chart(workbook: Workbook, config: dict) -> None:
     column_chart.set_y_axis(config['y_axis'])
     column_chart.set_legend(config['legend'])
 
-    chartsheet.set_chart(column_chart)
-
-
-if __name__ == "__main__":
-    main()
+    worksheet.insert_chart("F2", column_chart, {'x_scale': 2, 'y_scale': 2})
 
     
