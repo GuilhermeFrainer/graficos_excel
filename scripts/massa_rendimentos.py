@@ -1,47 +1,43 @@
-import sidra_helpers as sh
+import sidra_helpers
 from sidrapy import get_table
-from xlsxwriter import Workbook
+import xlsxwriter
 
 
 series_size = 0
 
 
-def main():
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     global series_size
 
-    config = sh.get_config("config/massa_rendimentos.json")
-    period = sh.get_period(config['start_date'])
+    config = sidra_helpers.get_config("config/massa_rendimentos.json")
+    period = sidra_helpers.get_period(config['start_date'])
     earnings_data = get_data(period)
-    earnings_data = sh.api_to_list(earnings_data)
+    earnings_data = sidra_helpers.api_to_list(earnings_data)
+
     headers = ['Mês', 'Massa de rendimentos']
-    series_size = sh.get_series_size()
-    workbook, worksheet = sh.make_excel(f"{config['file_path']}Massa de rendimentos", earnings_data, headers)
-    make_chart(workbook, config)
+    series_size = sidra_helpers.get_series_size()
 
-    credits = [
-        'Arquivo feito por um código em Python',
-        'Link do código:',
-        'https://github.com/GuilhermeFrainer/graficos_excel',
-        'Dados retirados da API do SIDRA, tabela 6392'
+    worksheet = sidra_helpers.make_sheet("Massa de rendimentos", earnings_data, workbook, headers)
+    make_chart(workbook, worksheet, config)
+
+    credits += [
+        'Massa de rendimentos: tabela 6392 da API do SIDRA'
     ]
-    sh.make_credits(workbook, credits)
-    workbook.close()
 
 
-def make_chart(workbook: Workbook, config: dict) -> None:
-    chartsheet = workbook.add_chartsheet('Gráfico')
+def make_chart(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class, config: dict):
     chart = workbook.add_chart({'type': 'line'})
 
     chart.add_series({
-        'categories': f'=Dados!$A$2:$A${series_size + 1}',
-        'values': f'=Dados!$B$2:$B${series_size + 1}',
+        'categories': f"='{worksheet.get_name()}'!$A$2:$A${series_size + 1}",
+        'values': f"='{worksheet.get_name()}'!$B$2:$B${series_size + 1}",
         'data_labels': {'num_format': '#.0,'}
     })
 
     chart.set_x_axis(config['x_axis'])
     chart.set_y_axis(config['y_axis'])
     chart.set_legend({'none': True})
-    chartsheet.set_chart(chart)
+    worksheet.insert_chart("C2", chart, {'x_scale': 2, 'y_scale': 2})
 
 
 def get_data(period: str) -> list[list]:    
@@ -55,8 +51,4 @@ def get_data(period: str) -> list[list]:
         period=period,
     )
     return [earnings_data]
-
-
-if __name__ == '__main__':
-    main()
 
