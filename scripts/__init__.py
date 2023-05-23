@@ -3,8 +3,8 @@ from .caged import main as caged
 from .cpi import main as cpi
 from .desemprego import main as desemprego
 from .dollar_euro import main as dollar_euro
-### NON-UPDATED ###
 from .indice_vendas import main as indice_vendas
+### NON-UPDATED ###
 from .indice_volume import main as indice_volume
 from .ipca import main as ipca
 from .massa_rendimentos import main as massa_rendimentos

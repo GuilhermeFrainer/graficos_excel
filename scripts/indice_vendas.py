@@ -7,7 +7,7 @@ import json
 import sys
 
 
-def main():
+def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     config = sidra_helpers.get_config("config/indice_vendas.json")
     period = sidra_helpers.get_period(config['series_start_date'])
     sidra_data = get_data(period)
@@ -17,18 +17,13 @@ def main():
     sidra_data.append(ibc_br_data)
 
     headers = ['Mês', 'Varejo', 'Varejo ampliado', 'Indústria', 'Serviços', 'IBC-Br']
-    workbook, worksheet = sidra_helpers.make_excel(f"{config['file_path']}Índice de vendas", sidra_data, headers, index_chart=True)
+    worksheet = sidra_helpers.make_sheet("Índice de vendas", sidra_data, workbook, headers, index_chart=True)
     sidra_helpers.write_index_formulas(workbook, worksheet, headers)
 
-    credits = [
-        "Arquivo criado por código em Python",
-        "Link do código:",
-        "https://github.com/GuilhermeFrainer/graficos_excel",
-        "Fontes dos dados: API do Sidra, tabelas 8880, 8881, 8888 e 5906 e tabela 24364 da API do Bacen"
+    credits += [
+        "Fontes dos dados do índice de vendas: API do Sidra, tabelas 8880, 8881, 8888 e 5906 e tabela 24364 da API do Bacen"
     ]    
-    make_chart(workbook, config)
-    sidra_helpers.make_credits(workbook, credits)
-    workbook.close()
+    make_chart(workbook, worksheet, config)
 
 
 def get_data(period: str) -> list[list]:
@@ -79,94 +74,94 @@ def get_data(period: str) -> list[list]:
     return [t8880, t8881, t8888, t5906]
 
 
-def make_chart(workbook: xlsxwriter.Workbook, config: dict) -> None:
+def make_chart(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.worksheet_class, config: dict):
     series_size = sidra_helpers.get_series_size()
     chart_start = find_chart_start(config)
-    chartsheet = workbook.add_chartsheet('Gráfico')
     
     chart = workbook.add_chart({'type': 'line'})
     chart.add_series({
         # Varejo
-        'name': '=Dados!$H$5',
-        'categories': f'=Dados!$A${chart_start}:$A${5 + series_size}',
-        'values': f'=Dados!$H${chart_start}:$H${5 + series_size}',
-        'line': {'color': '#c00000'},
-        'data_labels': {
-            'num_format': '0.0',
-            'font': {
-                'color': '#c00000',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$H$5",
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start}:$A${5 + series_size}",
+        "values": f"='{worksheet.get_name()}'!$H${chart_start}:$H${5 + series_size}",
+        "line": {"color": "#c00000"},
+        "data_labels": {
+            "num_format": "0.0",
+            "font": {
+                "color": "#c00000",
+                "size": 12,
             }
         },
     })
     chart.add_series({
         # Varejo ampliado
-        'name': '=Dados!$I$5',
-        'categories': f'=Dados!$A${chart_start}:$A${5 + series_size}',
-        'values': f'=Dados!$I${chart_start}:$I${5 + series_size}',
-        'line': {'color': '#4c7ac6'},
-        'data_labels': {
-            'num_format': '0.0',
-            'font': {
-                'color': '#4c7ac6',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$I$5",
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start}:$A${5 + series_size}",
+        "values": f"='{worksheet.get_name()}'!$I${chart_start}:$I${5 + series_size}",
+        "line": {"color": "#4c7ac6"},
+        "data_labels": {
+            "num_format": "0.0",
+            "font": {
+                "color": "#4c7ac6",
+                "size": 12,
             }
         },
     })
     chart.add_series({
         # Indústria
-        'name': '=Dados!$J$5',
-        'categories': f'=Dados!$A${chart_start}:$A${5 + series_size}',
-        'values': f'=Dados!$J${chart_start}:$J${5 + series_size}',
-        'line': {'color': '#75ac46'},
-        'data_labels': {
-            'num_format': '0.0',
-            'font': {
-                'color': '#75ac46',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$J$5",
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start}:$A${5 + series_size}",
+        "values": f"='{worksheet.get_name()}'!$J${chart_start}:$J${5 + series_size}",
+        "line": {"color": "#75ac46"},
+        "data_labels": {
+            "num_format": "0.0",
+            "font": {
+                "color": "#75ac46",
+                "size": 12,
             }
         },
     })
     chart.add_series({
         # Serviços
-        'name': '=Dados!$K$5',
-        'categories': f'=Dados!$A${chart_start}:$A${5 + series_size}',
-        'values': f'=Dados!$K${chart_start}:$K${5 + series_size}',
-        'line': {'color': '#f7c722'},
-        'data_labels': {
-            'num_format': '0.0',
-            'font': {
-                'color': '#f7c722',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$K$5",
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start}:$A${5 + series_size}",
+        "values": f"='{worksheet.get_name()}'!$K${chart_start}:$K${5 + series_size}",
+        "line": {"color": "#f7c722"},
+        "data_labels": {
+            "num_format": "0.0",
+            "font": {
+                "color": "#f7c722",
+                "size": 12,
             }
         },
     })
     chart.add_series({
         # IBC-Br
-        'name': '=Dados!$L$5',
-        'categories': f'=Dados!$A${chart_start}:$A${5 + series_size}',
-        'values': f'=Dados!$L${chart_start}:$L${5 + series_size}',
-        'line': {'color': '#8c5cb4'},
-        'data_labels': {
-            'num_format': '0.0',
-            'font': {
-                'color': '#8c5cb4',
-                'size': 12,
+        "name": f"='{worksheet.get_name()}'!$L$5",
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start}:$A${5 + series_size}",
+        "values": f"='{worksheet.get_name()}'!$L${chart_start}:$L${5 + series_size}",
+        "line": {"color": "#8c5cb4"},
+        "data_labels": {
+            "num_format": "0.0",
+            "font": {
+                "color": "#8c5cb4",
+                "size": 12,
             }
         },
     })
     chart.add_series({
         # 100
-        'name': '=Dados!$M$5',
-        'categories': f'=Dados!$A${chart_start}:$A${5 + series_size}',
-        'values': f'=Dados!$M${chart_start}:$M${5 + series_size}',
-        'line': {'color': '#000000'},
+        "name": f"='{worksheet.get_name()}'!$M$5",
+        "categories": f"='{worksheet.get_name()}'!$A${chart_start}:$A${5 + series_size}",
+        "values": f"='{worksheet.get_name()}'!$M${chart_start}:$M${5 + series_size}",
+        "line": {"color": "#000000"},
     })
 
     chart.set_x_axis(config['x_axis'])
     chart.set_y_axis(config['y_axis'])
     chart.set_legend(config['legend'])
-    chartsheet.set_chart(chart)
+
+    worksheet.insert_chart("N2", chart, {'x_scale': 2, 'y_scale': 2})
 
 
 # Returns chart starting point (in the Excel file) by calculating the differnece (in months) between the chart starting point and the series'
@@ -192,9 +187,5 @@ def get_ibc_br(config: dict) -> list[float]:
 def parse_date(iso_date: str) -> str:
     date_list = iso_date.split('-')
     return f"{date_list[2]}/{date_list[1]}/{date_list[0]}"
-
-
-if __name__=="__main__":
-    main()
 
     
