@@ -8,7 +8,7 @@ import sys
 
 
 def main(workbook: xlsxwriter.Workbook, credits: list[str]):
-    config = sidra_helpers.get_config("config/indice_volume.json")
+    config = sidra_helpers.get_config("config/var_vendas.json")
     period = sidra_helpers.get_period(config['start_date'])
     api_data = get_data(period)
     api_data = sidra_helpers.api_to_list(api_data)
