@@ -1,3 +1,40 @@
 {
-    "series_start": "2011-01-01"
+    "series_start": "2011-01-01",
+    "index_chart": {
+        "x_axis": {
+            "num_font": {
+                "name": "Calibri",
+                "size": 12,
+                "rotation": 90
+            }
+        },
+        "y_axis": {
+            "num_font": {"name": "Calibri", "size": 12},
+            "min": 80,
+            "max": 105,
+            "major_unit": 5,
+            "major_gridlines": {"visible": false}
+        }
+    },
+    "sectorial_chart": {
+        "x_axis": {
+            "num_font": {
+                "name": "Calibri",
+                "size": 12,
+                "rotation": 90
+            }
+        },
+        "y_axis": {
+            "num_font": {"name": "Calibri", "size": 12},
+            "min": 75,
+            "max": 125,
+            "major_unit": 5,
+            "major_gridlines": {"visible": false}
+        },
+        "legend": {
+            "position": "bottom",
+            "font": {"name": "Calibri", "size": 12},
+            "delete_series": [3]
+        }
+    }
 }
