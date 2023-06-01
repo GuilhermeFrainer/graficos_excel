@@ -16,6 +16,7 @@ indice_vendas: tabelas 8880, 8881, 8888 e 8161 do SIDRA
 ipca: tabela 1737 do SIDRA e API do Bacen para expectativas  
 massa_rendimentos: tabela 6392 do SIDRA  
 pea: tabela 6318 do Sidra  
+pib: tabelas 1621 e 5932 do SIDRA  
 treasury: DGS10 from the FRED API  
 var_vendas: tabelas 8880, 8881, 8888 e 8161 do SIDRA e tabela 24364 do Bacen 
 

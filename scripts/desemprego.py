@@ -21,7 +21,7 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     make_chart(workbook, worksheet, config)
 
     credits += [
-        "Dados de desemprego obtidos da tabela 6381 da API do SIDRA"
+        "Desemprego: tabela 6381 da API do SIDRA"
     ]
 
 

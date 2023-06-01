@@ -1,5 +1,6 @@
 {
-    "series_start": "2011-01-01",
+    "index_series_start": "2011-01-01",
+    "var_series_start": "2007-01-01",
     "index_chart": {
         "x_axis": {
             "num_font": {
@@ -35,6 +36,42 @@
             "position": "bottom",
             "font": {"name": "Calibri", "size": 12},
             "delete_series": [3]
+        }
+    },
+    "var_charts": {
+        "t1": {
+            "x_axis": {
+                "num_font": {
+                    "name": "Calibri",
+                    "size": 12,
+                    "rotation": 90
+                },
+                "label_position": "low"
+            },
+            "y_axis": {
+                "num_font": {"name": "Calibri", "size": 12},
+                "min": -10,
+                "max": 8,
+                "major_unit": 2,
+                "major_gridlines": {"visible": false}
+            }
+        },
+        "t4": {
+            "x_axis": {
+                "num_font": {
+                    "name": "Calibri",
+                    "size": 12,
+                    "rotation": 90
+                },
+                "label_position": "low"
+            },
+            "y_axis": {
+                "num_font": {"name": "Calibri", "size": 12},
+                "min": -15,
+                "max": 15,
+                "major_unit": 5,
+                "major_gridlines": {"visible": false}
+            }
         }
     }
 }
