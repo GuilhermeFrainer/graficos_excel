@@ -1,4 +1,3 @@
-from .api_keys import FRED_API
 import requests
 import sys
 import json
@@ -11,6 +10,15 @@ series_length = 0
 
 
 def main(workbook: xlsxwriter.Workbook, credits: list[str]):
+    # Import API key and exit if there isn't one
+    try:
+        from .api_keys import FRED_API
+    except ImportError:
+        print("Error: API key not available for dollar_euro.py. Skipping dollar_euro chart.", file=sys.stderr)
+        print("To avoid this, insert a key in the \"api_keys.py\" file with the name \"FRED_API\"")
+        return
+    
+    
     config = sidra_helpers.get_config("config/dollar_euro.json")
     json_data = get_json(config)
     

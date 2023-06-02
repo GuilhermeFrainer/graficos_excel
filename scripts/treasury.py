@@ -11,6 +11,15 @@ entries = 0
 
 
 def main(workbook: xlsxwriter.Workbook, credits: list[str]):
+    # Import API key and exit if there isn't one
+    try:
+        from .api_keys import FRED_API
+    except ImportError:
+        print("Error: API key not available for treasury.py. Skipping treasury chart.", file=sys.stderr)
+        print("To avoid this, insert a key in the \"api_keys.py\" file with the name \"FRED_API\"")
+        return
+    
+    
     config = sidra_helpers.get_config("config/treasury.json")
     json_data = get_json(FRED_API, config['series_start']).text
     worksheet = json_to_excel(workbook, json.loads(json_data), config)

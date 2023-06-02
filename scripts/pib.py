@@ -160,11 +160,11 @@ def make_index_charts(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workb
         'name': f"'{worksheet.get_name()}'!${AGRICULTURE_COLUMN}$5",
         'categories': f"='{worksheet.get_name()}'!$A$6:$A${series_size + 5}",
         'values': f"='{worksheet.get_name()}'!${AGRICULTURE_COLUMN}$6:${AGRICULTURE_COLUMN}${series_size + 5}",
-        'line': {'color': '#c00000'},
+        'line': {'color': '#4c7ac6'},
         'data_labels': {
             'num_format': '0.0',
             'font': {
-                'color': '#c00000',
+                'color': '#4c7ac6',
                 'size': 12
             }
         }
@@ -174,11 +174,11 @@ def make_index_charts(workbook: xlsxwriter.Workbook, worksheet: xlsxwriter.Workb
         'name': f"='{worksheet.get_name()}'!${INDUSTRY_COLUMN}$5",
         'categories': f"='{worksheet.get_name()}'!$A$6:$A${series_size + 5}",
         'values': f"='{worksheet.get_name()}'!${INDUSTRY_COLUMN}$6:${INDUSTRY_COLUMN}${series_size + 5}",
-        'line': {'color': '#4c7ac6'},
+        'line': {'color': '#c00000'},
         'data_labels': {
             'num_format': '0.0',
             'font': {
-                'color': '#4c7ac6',
+                'color': '#c00000',
                 'size': 12
             }
         }

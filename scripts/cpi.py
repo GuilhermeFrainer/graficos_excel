@@ -11,6 +11,14 @@ total_entries = 0
 
 
 def main(workbook: xlsxwriter.Workbook, credits: list[str]):
+    # Import API key and exit if there isn't one
+    try:
+        from .api_keys import BLS_API
+    except ImportError:
+        print("Error: API key not available for cpi.py. Skipping cpi chart.", file=sys.stderr)
+        print("To avoid this, insert a key in the \"api_keys.py\" file with the name \"BLS_API\"")
+        return
+    
     config = sidra_helpers.get_config("config/cpi.json")
     full_cpi, core_cpi = get_data(config)
     

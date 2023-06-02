@@ -12,7 +12,11 @@ import scripts
 
 def main(argv: list[str]):
     if len(argv) < 2:
-        sys.exit("Too few arguments.")
+        sys.exit("Too few arguments. Try 'python graficos.py help'.")
+
+    if len(argv) < 3 and "help" in argv:
+        print("Usage: python graficos.py <charts you want>")
+        sys.exit()
 
     if "config" in argv:
         access_config(argv[1:])
@@ -53,7 +57,7 @@ def main(argv: list[str]):
     workbook.close()
 
 
-# argv here skips the name of the python program being run (i.e. it's shorter than usual)
+# 'argv' here skips the name of the python program being run (i.e. it's shorter than usual)
 def access_config(argv: list[str]):
     if len(argv) == 1:
         sys.exit("Please input the file whose config you wish to access.")
