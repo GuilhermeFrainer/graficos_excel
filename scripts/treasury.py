@@ -1,5 +1,5 @@
 from datetime import date
-from sys import exit
+import sys
 import xlsxwriter
 import requests
 import json
@@ -84,7 +84,7 @@ def get_json(api_key: str, series_start: str) -> dict:
     json_data = requests.get(request)
     
     if json_data.status_code != 200:
-        exit(f"Something went wrong at the FED. Status code: {json_data.status_code}")
+        sys.exit(f"Something went wrong at the FED. Status code: {json_data.status_code}")
 
     return json_data
 

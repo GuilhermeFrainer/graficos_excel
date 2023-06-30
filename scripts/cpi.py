@@ -19,7 +19,7 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
         return
     
     config = sidra_helpers.get_config("config/cpi.json")
-    full_cpi, core_cpi = get_data(config)
+    full_cpi, core_cpi = get_data(config, BLS_API)
     
     series_list = bls_to_list(full_cpi, core_cpi)
     headers = ['Período', 'Índice cheio', 'Núcleo de inflação']
@@ -33,7 +33,7 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     ]
 
 
-def get_data(config: dict) -> tuple[list, list]:
+def get_data(config: dict, api_key: str) -> tuple[list, list]:
     full_cpi = []
     core_cpi = []
     start_year = int(config['start_year'])
@@ -41,7 +41,7 @@ def get_data(config: dict) -> tuple[list, list]:
 
     while start_year <= datetime.date.today().year:
 
-        new_full_cpi, new_core_cpi = get_json(start_year, end_year)
+        new_full_cpi, new_core_cpi = get_json(start_year, end_year, api_key)
         full_cpi = new_full_cpi + full_cpi
         core_cpi = new_core_cpi + core_cpi
         start_year = end_year + 1
@@ -119,9 +119,9 @@ def save_data(json_data):
 
 
 # Gets json object from BLS API
-def get_json(start_year : int, end_year : int) -> dict:
+def get_json(start_year : int, end_year : int, api_key: str) -> dict:
     headers = {'Content-type': 'application/json'}
-    data = json.dumps({"seriesid": ['CUUR0000SA0','CUUR0000SA0L1E'],"startyear": str(start_year), "endyear": str(end_year), "calculations": True, 'registrationKey': BLS_API})
+    data = json.dumps({"seriesid": ['CUUR0000SA0','CUUR0000SA0L1E'],"startyear": str(start_year), "endyear": str(end_year), "calculations": True, 'registrationKey': api_key})
     p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
     
     if p.status_code != 200:

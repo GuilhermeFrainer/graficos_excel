@@ -20,7 +20,7 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     
     
     config = sidra_helpers.get_config("config/dollar_euro.json")
-    json_data = get_json(config)
+    json_data = get_json(config, FRED_API)
     
     worksheet = make_sheet(workbook, json_data, config)
     make_chart(workbook, worksheet, config)
@@ -31,8 +31,8 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
 
 
 # Gets json data from the FRED API
-def get_json(config: dict) -> dict:
-    request = f"series_id=DEXUSEU&observation_start={config['series_start']}&observation_end={config['series_end']}&api_key={FRED_API}&file_type=json"
+def get_json(config: dict, api_key: str) -> dict:
+    request = f"series_id=DEXUSEU&observation_start={config['series_start']}&observation_end={config['series_end']}&api_key={api_key}&file_type=json"
     request = f"https://api.stlouisfed.org/fred/series/observations?{request}"
 
     json_data = requests.get(request)
