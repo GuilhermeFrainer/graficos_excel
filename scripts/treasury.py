@@ -4,7 +4,6 @@ import xlsxwriter
 import requests
 import json
 import sidra_helpers
-from .api_keys import FRED_API
 
 
 entries = 0
