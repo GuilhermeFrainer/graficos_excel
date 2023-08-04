@@ -58,14 +58,22 @@ def make_chart(workbook : xlsxwriter.Workbook, worksheet: xlsxwriter.Workbook.wo
         'categories': f"='{worksheet.get_name()}'!$A$2:$A${1 + total_entries}",
         'values': f"='{worksheet.get_name()}'!$B$2:$B${1 + total_entries}",
         'line': {'color': '#4472c4'},
-        'name': 'Índice cheio'
+        'name': 'Índice cheio',
+        'data_labels': {
+            'num_format': '0.0',
+            'font': {'size': 12, 'color': '#4472c4'}
+        }
     })    
 
     chart.add_series({
         'categories': f"='{worksheet.get_name()}'!$A$2:$A${1 + total_entries}",
         'values': f"='{worksheet.get_name()}'!$C$2:$C${1 + total_entries}",
         'line': {'color': '#c00000'},
-        'name': 'Núcleo de inflação'
+        'name': 'Núcleo de inflação',
+        'data_labels': {
+            'num_format': '0.0',
+            'font': {'size': 12, 'color': '#c00000'}
+        }
     })
 
     chart.set_x_axis(config['x_axis'])

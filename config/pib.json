@@ -1,6 +1,6 @@
 {
     "index_series_start": "2011-01-01",
-    "var_series_start": "2007-01-01",
+    "var_series_start": "2011-01-01",
     "index_chart": {
         "x_axis": {
             "num_font": {

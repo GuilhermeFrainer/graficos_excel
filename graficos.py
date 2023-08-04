@@ -1,13 +1,14 @@
 # External imports
-import sys
-import json
-from datetime import date
 import xlsxwriter
 import sidra_helpers
 
 
 # Local imports
 import scripts
+import sys
+import json
+from datetime import date
+import os
 
 
 def main(argv: list[str]):
@@ -21,6 +22,9 @@ def main(argv: list[str]):
     if "config" in argv:
         access_config(argv[1:])
 
+    if not os.path.isdir("files"):
+        os.mkdir("files")
+    
     filename = handle_filename(argv)
     workbook = xlsxwriter.Workbook(f"files/{filename}")
 

@@ -1,5 +1,5 @@
 {
-    "start_year": "1965",
+    "start_year": "2019",
     "x_axis": {
         "data_axis": true,
         "major_unit": 2,
@@ -8,8 +8,8 @@
         "num_font": {"size": 12, "name": "Calibri"}
     },
     "y_axis": {
-        "max": 16,
-        "min": -4,
+        "max": 10,
+        "min": 0,
         "major_unit": 2,
         "num_font": {"size": 12, "name": "Calibri"},
         "major_gridlines": {"visible": false}
