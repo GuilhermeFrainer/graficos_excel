@@ -21,7 +21,7 @@ def main(workbook: xlsxwriter.Workbook, credits: list[str]):
     ipca_data = sidra_helpers.api_to_list(ipca_data)
     ipca_size = sidra_helpers.get_series_size()
 
-    expectations = get_expectations(ipca_data)
+    expectations = get_expectations(ipca_data, config["chart_end_date"])
     expectations_size = len(expectations[0])
     series_size = ipca_size + expectations_size
 
@@ -77,7 +77,7 @@ def get_last_focus_survey_date() -> str:
 
 
 # Gets inflation expectations from the BACEN API
-def get_expectations(ipca_data: list[list]) -> list[list]:
+def get_expectations(ipca_data: list[list], limit_date: str) -> list[list]:
     last_focus_survey = get_last_focus_survey_date()
     BACEN_API_ADDRESS = f"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24filter=Indicador%20eq%20'IPCA'%20and%20Data%20eq%20'{last_focus_survey}'%20and%20baseCalculo%20eq%201"
     r = requests.get(BACEN_API_ADDRESS)
@@ -92,11 +92,23 @@ def get_expectations(ipca_data: list[list]) -> list[list]:
 
     for item in json_data['value'][::-1]:
         month, year = item['DataReferencia'].split('/')
+        limit_year, limit_month, _ = limit_date.split('-')
+
         date = f'{year}-{month}-01'
         date = datetime.date.fromisoformat(date)
         # Avoids having expectations and actual data for the same period
         if date in ipca_data[0]:
             continue
+        
+        month = int(month)
+        year = int(year)
+        limit_month = int(limit_month)
+        limit_year = int(limit_year)
+
+        if year > limit_year:
+            break
+        elif year == limit_year and month > limit_month:
+            break
         
         dates.append(date)
         monthly_data.append(item['Mediana'])

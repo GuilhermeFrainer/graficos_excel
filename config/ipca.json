@@ -1,6 +1,7 @@
 {
     "series_start_date": "2019-01-01",
-    "chart_start_date": "2021-01-01",
+    "chart_start_date": "2022-01-01",
+    "chart_end_date": "2024-12-01",
     "x_axis": {
         "num_font": {"name": "Calibri", "size": 12},
         "date_axis": true,
